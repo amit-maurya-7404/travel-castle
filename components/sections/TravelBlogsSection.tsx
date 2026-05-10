@@ -1,0 +1,80 @@
+import Image from 'next/image'
+import Link from 'next/link'
+import { Card } from '@/components/ui/card'
+import { BookOpen, ArrowUpRight } from 'lucide-react'
+import { blogs } from '@/constants/data'
+
+export function TravelBlogsSection() {
+  return (
+    <section id="blogs" className="py-24 bg-background relative overflow-hidden">
+      <div className="absolute inset-0 overflow-hidden pointer-events-none">
+        <div className="absolute w-[600px] h-[600px] bg-accent/5 rounded-full blur-[120px] -bottom-40 -left-40 animate-pulse-slow"></div>
+      </div>
+
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
+        <div className="mb-14 animate-slide-in-up flex flex-col md:flex-row md:items-end justify-between gap-6 border-b border-border/50 pb-8">
+          <div>
+            <div className="inline-flex items-center gap-2 mb-4 px-4 py-1.5 rounded-full bg-primary/10 border border-primary/20">
+              <BookOpen className="w-4 h-4 text-primary" />
+              <span className="text-primary font-bold uppercase text-xs tracking-widest">Stories & Insights</span>
+            </div>
+            <h2 className="text-4xl md:text-5xl font-extrabold text-foreground tracking-tight">
+              Travel <span className="text-transparent bg-clip-text bg-gradient-to-r from-primary to-accent">Journals</span>
+            </h2>
+          </div>
+          <p className="text-lg text-muted-foreground max-w-md font-light">
+            Stories, reflections and unfiltered notes from the road. Get inspired for your next adventure.
+          </p>
+        </div>
+
+        <div className="grid md:grid-cols-3 gap-8 stagger-children">
+          {blogs.map((blog, idx) => (
+            <Link key={idx} href={`/blogs/${idx + 1}`} className="block group">
+              <Card
+                className="border-0 bg-transparent shadow-none hover:bg-white/5 transition-all duration-500 rounded-3xl overflow-hidden cursor-pointer flex flex-col h-full"
+              >
+                <div className="relative h-64 md:h-72 overflow-hidden rounded-3xl m-2">
+                  <Image
+                    src={blog.image}
+                    alt={blog.title}
+                    fill
+                    className="object-cover group-hover:scale-105 transition-transform duration-700 ease-in-out"
+                  />
+                  <div className="absolute top-4 left-4 bg-black/40 backdrop-blur-md text-white text-xs font-bold px-3 py-1 rounded-full border border-white/20">
+                    Featured
+                  </div>
+                  <div className="absolute inset-0 bg-black/10 group-hover:bg-black/0 transition-colors duration-500"></div>
+                </div>
+                
+                <div className="p-4 pt-6 flex flex-col flex-grow">
+                  <div className="flex items-center gap-2 text-muted-foreground text-xs font-medium uppercase tracking-widest mb-3">
+                    <span>Travel</span>
+                    <span className="w-1 h-1 rounded-full bg-primary"></span>
+                    <span>5 Min Read</span>
+                  </div>
+                  
+                  <h3 className="text-2xl font-bold text-foreground mb-3 leading-tight group-hover:text-primary transition duration-300">
+                    {blog.title}
+                  </h3>
+                  
+                  <p className="text-muted-foreground mb-6 leading-relaxed font-light line-clamp-2">
+                    {blog.description}
+                  </p>
+                  
+                  <div className="mt-auto flex items-center justify-between border-t border-border/50 pt-4">
+                    <span className="text-primary font-bold text-sm tracking-wide group-hover:translate-x-2 transition-transform duration-300">
+                      Read Article
+                    </span>
+                    <div className="w-8 h-8 rounded-full bg-primary/10 flex items-center justify-center group-hover:bg-primary group-hover:text-white text-primary transition-colors duration-300">
+                      <ArrowUpRight className="w-4 h-4" />
+                    </div>
+                  </div>
+                </div>
+              </Card>
+            </Link>
+          ))}
+        </div>
+      </div>
+    </section>
+  )
+}
