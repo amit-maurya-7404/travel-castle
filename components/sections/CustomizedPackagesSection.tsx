@@ -1,9 +1,13 @@
+'use client'
+
 import Link from 'next/link'
-import Image from 'next/image'
+import { useState } from 'react'
 import { Button } from '@/components/ui/button'
 import { Sparkles } from 'lucide-react'
 import { packages } from '@/constants/data'
 import { PackageCard } from '@/components/ui/PackageCard'
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogTrigger } from '@/components/ui/dialog'
+import { Input } from '@/components/ui/input'
 
 export function CustomizedPackagesSection() {
   return (
@@ -28,7 +32,38 @@ export function CustomizedPackagesSection() {
 
         <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8 stagger-children">
           {packages.map((pkg, idx) => (
-            <PackageCard key={idx} {...pkg} />
+            <Dialog key={idx}>
+              <DialogTrigger asChild>
+                <div>
+                  <PackageCard {...pkg} onClick={() => {}} />
+                </div>
+              </DialogTrigger>
+              <DialogContent className="bg-[#0a0a0a] border border-white/10 text-white sm:max-w-[425px]">
+                <DialogHeader>
+                  <DialogTitle className="text-2xl font-bold">Customize {pkg.title}</DialogTitle>
+                  <DialogDescription className="text-gray-400">
+                    Fill out this form and our travel experts will contact you shortly to plan your dream trip.
+                  </DialogDescription>
+                </DialogHeader>
+                <form className="space-y-4 mt-4" onSubmit={(e) => { e.preventDefault(); alert('Request sent successfully!'); }}>
+                  <div className="space-y-2">
+                    <label className="text-sm font-medium text-gray-300">Your Name</label>
+                    <Input required placeholder="John Doe" className="bg-white/5 border-white/10 text-white focus-visible:ring-primary h-12" />
+                  </div>
+                  <div className="space-y-2">
+                    <label className="text-sm font-medium text-gray-300">Phone Number</label>
+                    <Input required type="tel" placeholder="+91 XXXXX XXXXX" className="bg-white/5 border-white/10 text-white focus-visible:ring-primary h-12" />
+                  </div>
+                  <div className="space-y-2">
+                    <label className="text-sm font-medium text-gray-300">Email Address</label>
+                    <Input required type="email" placeholder="john@example.com" className="bg-white/5 border-white/10 text-white focus-visible:ring-primary h-12" />
+                  </div>
+                  <Button type="submit" className="w-full bg-gradient-to-r from-primary to-green-500 hover:from-primary/90 hover:to-green-500/90 text-white font-bold h-12 mt-4 text-lg shadow-[0_0_20px_rgba(var(--primary-rgb),0.3)]">
+                    Submit Request
+                  </Button>
+                </form>
+              </DialogContent>
+            </Dialog>
           ))}
         </div>
 

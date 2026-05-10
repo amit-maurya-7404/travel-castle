@@ -16,6 +16,7 @@ interface PackageCardProps {
   rating?: number;
   reviews?: string;
   isBestSeller?: boolean;
+  onClick?: () => void;
 }
 
 export function PackageCard({
@@ -31,17 +32,17 @@ export function PackageCard({
   rating = 5,
   reviews = '(0+)',
   isBestSeller = false,
+  onClick,
 }: PackageCardProps) {
-  return (
-    <Link href={`/packages/${id}`} className="block h-full">
-      <Card className="relative overflow-hidden border-0 bg-transparent h-[400px] flex flex-col group cursor-pointer shadow-2xl rounded-3xl">
-        {/* Edge-to-edge Image */}
-        <Image
-          src={image}
-          alt={title}
-          fill
-          className="object-cover group-hover:scale-110 transition-transform duration-700 ease-in-out"
-        />
+  const CardContent = (
+    <Card className="relative overflow-hidden border-0 bg-transparent h-[400px] flex flex-col group cursor-pointer shadow-2xl rounded-3xl">
+      {/* Edge-to-edge Image */}
+      <Image
+        src={image}
+        alt={title}
+        fill
+        className="object-cover group-hover:scale-110 transition-transform duration-700 ease-in-out"
+      />
         
         {/* Cinematic Gradient */}
         <div className="absolute inset-0 bg-gradient-to-t from-[#0a0a0a] via-black/60 to-transparent"></div>
@@ -102,6 +103,19 @@ export function PackageCard({
           </div>
         </div>
       </Card>
+  )
+
+  if (onClick) {
+    return (
+      <div onClick={onClick} className="block h-full cursor-pointer">
+        {CardContent}
+      </div>
+    )
+  }
+
+  return (
+    <Link href={`/packages/${id}`} className="block h-full">
+      {CardContent}
     </Link>
   )
 }

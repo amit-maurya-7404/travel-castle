@@ -54,29 +54,6 @@ export default function PackageDetail({ params }: { params: Promise<{ id: string
 
   return (
     <div className="min-h-screen bg-[#050505] text-white selection:bg-primary/30">
-      {/* Header */}
-      <header className="fixed top-0 left-0 right-0 z-50 transition-all duration-300 bg-black/80 backdrop-blur-xl border-b border-white/5 shadow-sm">
-        <nav className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-3 flex items-center justify-between">
-          <div className="flex items-center gap-3 group">
-            <Link href="/">
-              <Image
-                src="/logo.png"
-                alt="Travel Castle"
-                width={50}
-                height={50}
-                className="h-10 w-auto transition-transform duration-300 group-hover:scale-105"
-              />
-            </Link>
-          </div>
-          <div className="hidden md:flex items-center gap-8">
-            <Link href="/domestic-trips" className="text-white hover:text-primary transition font-medium text-sm">Domestic</Link>
-            <Link href="/international-trips" className="text-white hover:text-primary transition font-medium text-sm">International</Link>
-            <Link href="/blogs" className="text-white hover:text-primary transition font-medium text-sm">Blogs</Link>
-            <Link href="/about-us" className="text-white hover:text-primary transition font-medium text-sm">About Us</Link>
-            <Button className="bg-primary hover:bg-accent text-white font-semibold rounded-full px-6 shadow-[0_0_15px_rgba(var(--primary-rgb),0.3)]">Contact Us</Button>
-          </div>
-        </nav>
-      </header>
 
       {/* Premium Hero Section */}
       <section className="relative h-[70vh] min-h-[500px] w-full flex items-end pb-12 pt-20">
