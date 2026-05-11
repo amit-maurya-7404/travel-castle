@@ -4,6 +4,14 @@ import { Card } from '@/components/ui/card'
 import { BookOpen, ArrowUpRight } from 'lucide-react'
 import { blogs } from '@/constants/data'
 
+import {
+  Carousel,
+  CarouselContent,
+  CarouselItem,
+  CarouselNext,
+  CarouselPrevious,
+} from "@/components/ui/carousel"
+
 export function TravelBlogsSection() {
   return (
     <section id="blogs" className="py-24 bg-background relative overflow-hidden">
@@ -27,52 +35,73 @@ export function TravelBlogsSection() {
           </p>
         </div>
 
-        <div className="grid md:grid-cols-3 gap-8 stagger-children">
-          {blogs.map((blog, idx) => (
-            <Link key={idx} href={`/blogs/${idx + 1}`} className="block group">
-              <Card
-                className="border-0 bg-transparent shadow-none hover:bg-white/5 transition-all duration-500 rounded-3xl overflow-hidden cursor-pointer flex flex-col h-full"
-              >
-                <div className="relative h-64 md:h-72 overflow-hidden rounded-3xl m-2">
-                  <Image
-                    src={blog.image}
-                    alt={blog.title}
-                    fill
-                    className="object-cover group-hover:scale-105 transition-transform duration-700 ease-in-out"
-                  />
-                  <div className="absolute top-4 left-4 bg-black/40 backdrop-blur-md text-white text-xs font-bold px-3 py-1 rounded-full border border-white/20">
-                    Featured
+        {/* Blogs Carousel */}
+        <div className="relative">
+          <Carousel
+            opts={{
+              align: "start",
+              loop: true,
+            }}
+            className="w-full"
+          >
+            <CarouselContent className="-ml-4">
+              {blogs.map((blog, idx) => (
+                <CarouselItem key={idx} className="pl-4 basis-[85%] md:basis-1/2 lg:basis-1/3">
+                  <div className="p-1 h-full">
+                    <Link href={`/blogs/${idx + 1}`} className="block group h-full">
+                      <Card
+                        className="border-0 bg-transparent shadow-none hover:bg-white/5 transition-all duration-500 rounded-3xl overflow-hidden cursor-pointer flex flex-col h-full"
+                      >
+                        <div className="relative h-64 md:h-72 overflow-hidden rounded-3xl m-2">
+                          <Image
+                            src={blog.image}
+                            alt={blog.title}
+                            fill
+                            className="object-cover group-hover:scale-105 transition-transform duration-700 ease-in-out"
+                          />
+                          <div className="absolute top-4 left-4 bg-black/40 backdrop-blur-md text-white text-xs font-bold px-3 py-1 rounded-full border border-white/20">
+                            Featured
+                          </div>
+                          <div className="absolute inset-0 bg-black/10 group-hover:bg-black/0 transition-colors duration-500"></div>
+                        </div>
+
+                        <div className="p-4 pt-6 flex flex-col flex-grow">
+                          <div className="flex items-center gap-2 text-muted-foreground text-xs font-medium uppercase tracking-widest mb-3">
+                            <span>Travel</span>
+                            <span className="w-1 h-1 rounded-full bg-primary"></span>
+                            <span>5 Min Read</span>
+                          </div>
+
+                          <h3 className="text-2xl font-bold text-foreground mb-3 leading-tight group-hover:text-primary transition duration-300">
+                            {blog.title}
+                          </h3>
+
+                          <p className="text-muted-foreground mb-6 leading-relaxed font-light line-clamp-2">
+                            {blog.description}
+                          </p>
+
+                          <div className="mt-auto flex items-center justify-between border-t border-border/50 pt-4">
+                            <span className="text-primary font-bold text-sm tracking-wide group-hover:translate-x-2 transition-transform duration-300">
+                              Read Article
+                            </span>
+                            <div className="w-8 h-8 rounded-full bg-primary/10 flex items-center justify-center group-hover:bg-primary group-hover:text-white text-primary transition-colors duration-300">
+                              <ArrowUpRight className="w-4 h-4" />
+                            </div>
+                          </div>
+                        </div>
+                      </Card>
+                    </Link>
                   </div>
-                  <div className="absolute inset-0 bg-black/10 group-hover:bg-black/0 transition-colors duration-500"></div>
-                </div>
-                
-                <div className="p-4 pt-6 flex flex-col flex-grow">
-                  <div className="flex items-center gap-2 text-muted-foreground text-xs font-medium uppercase tracking-widest mb-3">
-                    <span>Travel</span>
-                    <span className="w-1 h-1 rounded-full bg-primary"></span>
-                    <span>5 Min Read</span>
-                  </div>
-                  
-                  <h3 className="text-2xl font-bold text-foreground mb-3 leading-tight group-hover:text-primary transition duration-300">
-                    {blog.title}
-                  </h3>
-                  
-                  <p className="text-muted-foreground mb-6 leading-relaxed font-light line-clamp-2">
-                    {blog.description}
-                  </p>
-                  
-                  <div className="mt-auto flex items-center justify-between border-t border-border/50 pt-4">
-                    <span className="text-primary font-bold text-sm tracking-wide group-hover:translate-x-2 transition-transform duration-300">
-                      Read Article
-                    </span>
-                    <div className="w-8 h-8 rounded-full bg-primary/10 flex items-center justify-center group-hover:bg-primary group-hover:text-white text-primary transition-colors duration-300">
-                      <ArrowUpRight className="w-4 h-4" />
-                    </div>
-                  </div>
-                </div>
-              </Card>
-            </Link>
-          ))}
+                </CarouselItem>
+              ))}
+            </CarouselContent>
+            <div className="flex justify-center gap-4 mt-8 md:hidden">
+              <CarouselPrevious className="relative inset-0 translate-y-0" />
+              <CarouselNext className="relative inset-0 translate-y-0" />
+            </div>
+            <CarouselPrevious className="hidden md:flex -left-12 bg-background/50 backdrop-blur-md border-border/50 text-foreground hover:bg-primary hover:text-white transition-all" />
+            <CarouselNext className="hidden md:flex -right-12 bg-background/50 backdrop-blur-md border-border/50 text-foreground hover:bg-primary hover:text-white transition-all" />
+          </Carousel>
         </div>
       </div>
     </section>

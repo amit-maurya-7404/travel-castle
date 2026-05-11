@@ -13,7 +13,7 @@ export default function DomesticTrips() {
   const filteredTrips = tripType === 'all' ? domesticTrips : domesticTrips.filter(trip => trip.type === tripType)
 
   return (
-    <div className="min-h-screen bg-background">
+    <div className="min-h-screen bg-background pt-24">
 
       {/* Hero Section */}
       <section className="relative bg-gradient-to-b from-primary/10 to-background py-12 overflow-hidden">

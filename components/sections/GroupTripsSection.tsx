@@ -7,6 +7,13 @@ import { Button } from '@/components/ui/button'
 import { Sparkles } from 'lucide-react'
 import { groupTrips } from '@/constants/data'
 import { PackageCard } from '@/components/ui/PackageCard'
+import {
+  Carousel,
+  CarouselContent,
+  CarouselItem,
+  CarouselNext,
+  CarouselPrevious,
+} from "@/components/ui/carousel"
 
 export function GroupTripsSection() {
   const [tripFilter, setTripFilter] = useState('all')
@@ -19,7 +26,7 @@ export function GroupTripsSection() {
       </div>
 
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
-        <div className="mb-14 animate-slide-in-up flex flex-col items-center text-center">
+        <div className="mb-10 animate-slide-in-up flex flex-col items-center text-center">
           <div className="inline-flex items-center gap-2 mb-4 px-4 py-1.5 rounded-full bg-primary/10 border border-primary/20">
             <Sparkles className="w-4 h-4 text-primary" />
             <span className="text-primary font-bold uppercase text-xs tracking-widest">Group Adventures</span>
@@ -33,16 +40,15 @@ export function GroupTripsSection() {
         </div>
 
         {/* Premium Filters */}
-        <div className="flex gap-3 justify-center mb-16 flex-wrap">
+        <div className="flex gap-3 justify-center mb-10 flex-wrap">
           {['all', 'domestic', 'international'].map((filter) => (
             <button
               key={filter}
               onClick={() => setTripFilter(filter)}
-              className={`relative px-6 py-2.5 rounded-full font-medium text-sm transition-all duration-300 overflow-hidden ${
-                tripFilter === filter 
-                  ? 'text-white shadow-[0_0_20px_rgba(var(--primary-rgb),0.4)] scale-105' 
-                  : 'text-muted-foreground bg-white/5 border border-white/10 hover:bg-white/10 hover:text-foreground'
-              }`}
+              className={`relative px-6 py-2.5 rounded-full font-medium text-sm transition-all duration-300 overflow-hidden ${tripFilter === filter
+                ? 'text-white shadow-[0_0_20px_rgba(var(--primary-rgb),0.4)] scale-105'
+                : 'text-muted-foreground bg-white/5 border border-white/10 hover:bg-white/10 hover:text-foreground'
+                }`}
             >
               {tripFilter === filter && (
                 <span className="absolute inset-0 bg-gradient-to-r from-primary to-green-500 opacity-90 -z-10"></span>
@@ -52,11 +58,31 @@ export function GroupTripsSection() {
           ))}
         </div>
 
-        {/* Group Trips Grid */}
-        <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
-          {groupTrips.map((trip, idx) => (
-            <PackageCard key={idx} {...trip} />
-          ))}
+        {/* Group Trips Carousel */}
+        <div className="relative">
+          <Carousel
+            opts={{
+              align: "start",
+              loop: true,
+            }}
+            className="w-full"
+          >
+            <CarouselContent className="-ml-4">
+              {groupTrips.filter(trip => tripFilter === 'all' || trip.type === tripFilter).map((trip, idx) => (
+                <CarouselItem key={idx} className="pl-4 basis-[85%] md:basis-1/2 lg:basis-1/3">
+                  <div className="p-1">
+                    <PackageCard {...trip} />
+                  </div>
+                </CarouselItem>
+              ))}
+            </CarouselContent>
+            <div className="flex justify-center gap-4 mt-8 md:hidden">
+              <CarouselPrevious className="relative inset-0 translate-y-0" />
+              <CarouselNext className="relative inset-0 translate-y-0" />
+            </div>
+            <CarouselPrevious className="hidden md:flex -left-12 bg-background/50 backdrop-blur-md border-border/50 text-foreground hover:bg-primary hover:text-white transition-all" />
+            <CarouselNext className="hidden md:flex -right-12 bg-background/50 backdrop-blur-md border-border/50 text-foreground hover:bg-primary hover:text-white transition-all" />
+          </Carousel>
         </div>
       </div>
     </section>

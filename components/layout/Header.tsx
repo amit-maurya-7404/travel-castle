@@ -38,8 +38,8 @@ export function Header() {
   return (
     <>
       <header
-        className={`fixed top-0 left-0 right-0 z-40 transition-all duration-300 bg-background border-b border-border/50 ${isScrolled ? 'shadow-md py-3' : 'py-0'
-          }`}
+        className="fixed top-0 left-0 right-0 z-40 transition-all duration-300 bg-background border-b border-border/50 shadow-md"
+
       >
         <nav className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex items-center justify-between">
 
@@ -51,7 +51,7 @@ export function Header() {
                 alt="Travel Castle"
                 width={50}
                 height={50}
-                className={`w-auto  ${isScrolled ? 'h-16' : 'h-20'}`}
+                className="w-auto h-16 md:h-20"
               />
             </Link>
           </div>

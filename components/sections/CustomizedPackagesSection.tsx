@@ -9,6 +9,14 @@ import { PackageCard } from '@/components/ui/PackageCard'
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogTrigger } from '@/components/ui/dialog'
 import { Input } from '@/components/ui/input'
 
+import {
+  Carousel,
+  CarouselContent,
+  CarouselItem,
+  CarouselNext,
+  CarouselPrevious,
+} from "@/components/ui/carousel"
+
 export function CustomizedPackagesSection() {
   return (
     <section id="packages" className="py-20 bg-secondary relative overflow-hidden">
@@ -30,41 +38,62 @@ export function CustomizedPackagesSection() {
           </p>
         </div>
 
-        <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8 stagger-children">
-          {packages.map((pkg, idx) => (
-            <Dialog key={idx}>
-              <DialogTrigger asChild>
-                <div>
-                  <PackageCard {...pkg} onClick={() => {}} />
-                </div>
-              </DialogTrigger>
-              <DialogContent className="bg-[#0a0a0a] border border-white/10 text-white sm:max-w-[425px]">
-                <DialogHeader>
-                  <DialogTitle className="text-2xl font-bold">Customize {pkg.title}</DialogTitle>
-                  <DialogDescription className="text-gray-400">
-                    Fill out this form and our travel experts will contact you shortly to plan your dream trip.
-                  </DialogDescription>
-                </DialogHeader>
-                <form className="space-y-4 mt-4" onSubmit={(e) => { e.preventDefault(); alert('Request sent successfully!'); }}>
-                  <div className="space-y-2">
-                    <label className="text-sm font-medium text-gray-300">Your Name</label>
-                    <Input required placeholder="John Doe" className="bg-white/5 border-white/10 text-white focus-visible:ring-primary h-12" />
+        {/* Packages Carousel */}
+        <div className="relative">
+          <Carousel
+            opts={{
+              align: "start",
+              loop: true,
+            }}
+            className="w-full"
+          >
+            <CarouselContent className="-ml-4">
+              {packages.map((pkg, idx) => (
+                <CarouselItem key={idx} className="pl-4 basis-[85%] md:basis-1/2 lg:basis-1/3">
+                  <div className="p-1">
+                    <Dialog>
+                      <DialogTrigger asChild>
+                        <div className="cursor-pointer">
+                          <PackageCard {...pkg} onClick={() => { }} />
+                        </div>
+                      </DialogTrigger>
+                      <DialogContent className="bg-[#0a0a0a] border border-white/10 text-white sm:max-w-[425px]">
+                        <DialogHeader>
+                          <DialogTitle className="text-2xl font-bold">Customize {pkg.title}</DialogTitle>
+                          <DialogDescription className="text-gray-400">
+                            Fill out this form and our travel experts will contact you shortly to plan your dream trip.
+                          </DialogDescription>
+                        </DialogHeader>
+                        <form className="space-y-4 mt-4" onSubmit={(e) => { e.preventDefault(); alert('Request sent successfully!'); }}>
+                          <div className="space-y-2">
+                            <label className="text-sm font-medium text-gray-300">Your Name</label>
+                            <Input required placeholder="John Doe" className="bg-white/5 border-white/10 text-white focus-visible:ring-primary h-12" />
+                          </div>
+                          <div className="space-y-2">
+                            <label className="text-sm font-medium text-gray-300">Phone Number</label>
+                            <Input required type="tel" placeholder="+91 XXXXX XXXXX" className="bg-white/5 border-white/10 text-white focus-visible:ring-primary h-12" />
+                          </div>
+                          <div className="space-y-2">
+                            <label className="text-sm font-medium text-gray-300">Email Address</label>
+                            <Input required type="email" placeholder="john@example.com" className="bg-white/5 border-white/10 text-white focus-visible:ring-primary h-12" />
+                          </div>
+                          <Button type="submit" className="w-full bg-gradient-to-r from-primary to-green-500 hover:from-primary/90 hover:to-green-500/90 text-white font-bold h-12 mt-4 text-lg shadow-[0_0_20px_rgba(var(--primary-rgb),0.3)]">
+                            Submit Request
+                          </Button>
+                        </form>
+                      </DialogContent>
+                    </Dialog>
                   </div>
-                  <div className="space-y-2">
-                    <label className="text-sm font-medium text-gray-300">Phone Number</label>
-                    <Input required type="tel" placeholder="+91 XXXXX XXXXX" className="bg-white/5 border-white/10 text-white focus-visible:ring-primary h-12" />
-                  </div>
-                  <div className="space-y-2">
-                    <label className="text-sm font-medium text-gray-300">Email Address</label>
-                    <Input required type="email" placeholder="john@example.com" className="bg-white/5 border-white/10 text-white focus-visible:ring-primary h-12" />
-                  </div>
-                  <Button type="submit" className="w-full bg-gradient-to-r from-primary to-green-500 hover:from-primary/90 hover:to-green-500/90 text-white font-bold h-12 mt-4 text-lg shadow-[0_0_20px_rgba(var(--primary-rgb),0.3)]">
-                    Submit Request
-                  </Button>
-                </form>
-              </DialogContent>
-            </Dialog>
-          ))}
+                </CarouselItem>
+              ))}
+            </CarouselContent>
+            <div className="flex justify-center gap-4 mt-8 md:hidden">
+              <CarouselPrevious className="relative inset-0 translate-y-0" />
+              <CarouselNext className="relative inset-0 translate-y-0" />
+            </div>
+            <CarouselPrevious className="hidden md:flex -left-12 bg-background/50 backdrop-blur-md border-border/50 text-foreground hover:bg-primary hover:text-white transition-all" />
+            <CarouselNext className="hidden md:flex -right-12 bg-background/50 backdrop-blur-md border-border/50 text-foreground hover:bg-primary hover:text-white transition-all" />
+          </Carousel>
         </div>
 
         <div className="text-center mt-12 animate-fade-in [animation-delay:0.6s] opacity-0">

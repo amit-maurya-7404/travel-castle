@@ -12,6 +12,14 @@ const galleryImages = [
   '/images/hero-destination.jpg',
 ]
 
+import {
+  Carousel,
+  CarouselContent,
+  CarouselItem,
+  CarouselNext,
+  CarouselPrevious,
+} from "@/components/ui/carousel"
+
 export function GallerySection() {
   return (
     <section className="py-24 bg-background relative overflow-hidden">
@@ -33,21 +41,41 @@ export function GallerySection() {
           </p>
         </div>
 
-        <div className="columns-2 md:columns-3 lg:columns-4 gap-4 space-y-4">
-          {galleryImages.map((src, idx) => (
-            <div key={idx} className="relative rounded-2xl overflow-hidden group break-inside-avoid shadow-lg cursor-pointer">
-              <Image 
-                src={src} 
-                alt={`Gallery image ${idx + 1}`} 
-                width={600} 
-                height={800} 
-                className="w-full h-auto object-cover group-hover:scale-110 transition-transform duration-700 ease-in-out" 
-              />
-              <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-center justify-center">
-                <Sparkles className="w-8 h-8 text-white scale-0 group-hover:scale-100 transition-transform duration-500 delay-100" />
-              </div>
+        {/* Gallery Carousel */}
+        <div className="relative">
+          <Carousel
+            opts={{
+              align: "start",
+              loop: true,
+            }}
+            className="w-full"
+          >
+            <CarouselContent className="-ml-4">
+              {galleryImages.map((src, idx) => (
+                <CarouselItem key={idx} className="pl-4 basis-[70%] sm:basis-1/2 md:basis-1/3 lg:basis-1/4">
+                  <div className="p-1">
+                    <div className="relative rounded-2xl overflow-hidden group shadow-lg cursor-pointer aspect-[3/4]">
+                      <Image
+                        src={src}
+                        alt={`Gallery image ${idx + 1}`}
+                        fill
+                        className="object-cover group-hover:scale-110 transition-transform duration-700 ease-in-out"
+                      />
+                      <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-center justify-center">
+                        <Sparkles className="w-8 h-8 text-white scale-0 group-hover:scale-100 transition-transform duration-500 delay-100" />
+                      </div>
+                    </div>
+                  </div>
+                </CarouselItem>
+              ))}
+            </CarouselContent>
+            <div className="flex justify-center gap-4 mt-8 md:hidden">
+              <CarouselPrevious className="relative inset-0 translate-y-0" />
+              <CarouselNext className="relative inset-0 translate-y-0" />
             </div>
-          ))}
+            <CarouselPrevious className="hidden md:flex -left-12 bg-background/50 backdrop-blur-md border-border/50 text-foreground hover:bg-primary hover:text-white transition-all" />
+            <CarouselNext className="hidden md:flex -right-12 bg-background/50 backdrop-blur-md border-border/50 text-foreground hover:bg-primary hover:text-white transition-all" />
+          </Carousel>
         </div>
       </div>
     </section>
