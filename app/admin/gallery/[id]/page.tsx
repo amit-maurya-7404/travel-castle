@@ -7,6 +7,7 @@ import { Card } from '@/components/ui/card'
 import { ArrowLeft, Save, ImagePlus } from 'lucide-react'
 import Link from 'next/link'
 import Image from 'next/image'
+import { ImageUpload } from '@/components/ui/image-upload'
 
 const CATEGORIES = ['destination', 'experience', 'culture', 'nature']
 
@@ -138,36 +139,16 @@ export default function GalleryFormPage() {
             </select>
           </div>
 
-          {/* Image URL */}
+          {/* Image Upload */}
           <div>
             <label className="block text-sm font-semibold text-foreground mb-2">
-              Image URL *
+              Gallery Image *
             </label>
-            <div className="flex gap-2 mb-3">
-              <input
-                type="url"
-                required
-                value={formData.image}
-                onChange={(e) =>
-                  setFormData({ ...formData, image: e.target.value })
-                }
-                placeholder="https://..."
-                className="flex-1 px-4 py-2 border border-border rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500"
-              />
-              <Button type="button" variant="outline" size="icon">
-                <ImagePlus className="w-4 h-4" />
-              </Button>
-            </div>
-            {formData.image && (
-              <div className="relative h-48 rounded-lg overflow-hidden border border-border">
-                <Image
-                  src={formData.image}
-                  alt="Preview"
-                  fill
-                  className="object-cover"
-                />
-              </div>
-            )}
+            <ImageUpload
+              value={formData.image}
+              onChange={(url) => setFormData({ ...formData, image: url })}
+              onRemove={() => setFormData({ ...formData, image: '' })}
+            />
           </div>
 
           {/* Published */}

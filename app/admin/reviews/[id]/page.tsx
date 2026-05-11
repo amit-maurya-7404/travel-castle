@@ -6,6 +6,7 @@ import { Button } from '@/components/ui/button'
 import { Card } from '@/components/ui/card'
 import { ArrowLeft, Save, Star } from 'lucide-react'
 import Link from 'next/link'
+import { ImageUpload } from '@/components/ui/image-upload'
 
 export default function ReviewFormPage() {
   const router = useRouter()
@@ -179,19 +180,15 @@ export default function ReviewFormPage() {
             />
           </div>
 
-          {/* Avatar URL */}
+          {/* Avatar Upload */}
           <div>
             <label className="block text-sm font-semibold text-foreground mb-2">
-              Avatar URL
+              Customer Avatar
             </label>
-            <input
-              type="url"
+            <ImageUpload
               value={formData.avatar}
-              onChange={(e) =>
-                setFormData({ ...formData, avatar: e.target.value })
-              }
-              placeholder="https://..."
-              className="w-full px-4 py-2 border border-border rounded-lg focus:outline-none focus:ring-2 focus:ring-amber-500"
+              onChange={(url) => setFormData({ ...formData, avatar: url })}
+              onRemove={() => setFormData({ ...formData, avatar: '' })}
             />
           </div>
 

@@ -6,6 +6,7 @@ import { Button } from '@/components/ui/button'
 import { Card } from '@/components/ui/card'
 import { ArrowLeft, Save, ImagePlus } from 'lucide-react'
 import Link from 'next/link'
+import { ImageUpload } from '@/components/ui/image-upload'
 
 export default function BlogFormPage() {
   const router = useRouter()
@@ -152,25 +153,16 @@ export default function BlogFormPage() {
             />
           </div>
 
-          {/* Image URL */}
+          {/* Image Upload */}
           <div>
             <label className="block text-sm font-semibold text-foreground mb-2">
-              Image URL
+              Blog Image *
             </label>
-            <div className="flex gap-2">
-              <input
-                type="url"
-                value={formData.image}
-                onChange={(e) =>
-                  setFormData({ ...formData, image: e.target.value })
-                }
-                placeholder="https://..."
-                className="flex-1 px-4 py-2 border border-border rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500"
-              />
-              <Button type="button" variant="outline" size="icon">
-                <ImagePlus className="w-4 h-4" />
-              </Button>
-            </div>
+            <ImageUpload
+              value={formData.image}
+              onChange={(url) => setFormData({ ...formData, image: url })}
+              onRemove={() => setFormData({ ...formData, image: '' })}
+            />
           </div>
 
           {/* Author */}

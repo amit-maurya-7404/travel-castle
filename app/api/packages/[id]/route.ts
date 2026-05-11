@@ -65,6 +65,7 @@ export async function PUT(
         title: data.title,
         description: data.description,
         category: data.category,
+        type: data.type,
         image: data.image,
         duration: data.duration,
         price: data.price,

@@ -1,9 +1,10 @@
+'use client'
+
 import Image from 'next/image'
 import Link from 'next/link'
 import { Card } from '@/components/ui/card'
 import { BookOpen, ArrowUpRight } from 'lucide-react'
-import { blogs } from '@/constants/data'
-
+import { useState, useEffect } from 'react'
 import {
   Carousel,
   CarouselContent,
@@ -12,15 +13,25 @@ import {
   CarouselPrevious,
 } from "@/components/ui/carousel"
 
+import { blogs } from '@/constants/data'
+
 export function TravelBlogsSection() {
+  const [isMounted, setIsMounted] = useState(false)
+
+  useEffect(() => {
+    setIsMounted(true)
+  }, [])
+
+  if (!isMounted) return null
+
   return (
     <section id="blogs" className="py-24 bg-background relative overflow-hidden">
       <div className="absolute inset-0 overflow-hidden pointer-events-none">
         <div className="absolute w-[600px] h-[600px] bg-accent/5 rounded-full blur-[120px] -bottom-40 -left-40 animate-pulse-slow"></div>
       </div>
 
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
-        <div className="mb-14 animate-slide-in-up flex flex-col md:flex-row md:items-end justify-between gap-6 border-b border-border/50 pb-8">
+      <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
+        <div className="mb-14 animate-slide-in-up flex flex-col items-center text-center">
           <div>
             <div className="inline-flex items-center gap-2 mb-4 px-4 py-1.5 rounded-full bg-primary/10 border border-primary/20">
               <BookOpen className="w-4 h-4 text-primary" />
@@ -41,6 +52,7 @@ export function TravelBlogsSection() {
             opts={{
               align: "start",
               loop: true,
+              watchDrag: true,
             }}
             className="w-full"
           >
@@ -48,7 +60,7 @@ export function TravelBlogsSection() {
               {blogs.map((blog, idx) => (
                 <CarouselItem key={idx} className="pl-4 basis-[85%] md:basis-1/2 lg:basis-1/3">
                   <div className="p-1 h-full">
-                    <Link href={`/blogs/${idx + 1}`} className="block group h-full">
+                    <Link href={`#`} className="block group h-full">
                       <Card
                         className="border-0 bg-transparent shadow-none hover:bg-white/5 transition-all duration-500 rounded-3xl overflow-hidden cursor-pointer flex flex-col h-full"
                       >
@@ -99,8 +111,8 @@ export function TravelBlogsSection() {
               <CarouselPrevious className="relative inset-0 translate-y-0" />
               <CarouselNext className="relative inset-0 translate-y-0" />
             </div>
-            <CarouselPrevious className="hidden md:flex -left-12 bg-background/50 backdrop-blur-md border-border/50 text-foreground hover:bg-primary hover:text-white transition-all" />
-            <CarouselNext className="hidden md:flex -right-12 bg-background/50 backdrop-blur-md border-border/50 text-foreground hover:bg-primary hover:text-white transition-all" />
+            <CarouselPrevious className="hidden md:flex -left-12 bg-background/50 backdrop-blur-md border-border/50 text-foreground hover:bg-primary hover:text-white transition-all z-20" />
+            <CarouselNext className="hidden md:flex -right-12 bg-background/50 backdrop-blur-md border-border/50 text-foreground hover:bg-primary hover:text-white transition-all z-20" />
           </Carousel>
         </div>
       </div>

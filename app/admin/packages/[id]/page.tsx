@@ -6,6 +6,7 @@ import { Button } from '@/components/ui/button'
 import { Card } from '@/components/ui/card'
 import { ArrowLeft, Save, ImagePlus } from 'lucide-react'
 import Link from 'next/link'
+import { ImageUpload } from '@/components/ui/image-upload'
 
 const CATEGORIES = [
   'honeymoon',
@@ -25,6 +26,7 @@ export default function PackageFormPage() {
     title: '',
     description: '',
     category: 'honeymoon',
+    type: 'domestic',
     image: '',
     duration: '',
     price: '',
@@ -51,6 +53,7 @@ export default function PackageFormPage() {
           title: data.title,
           description: data.description,
           category: data.category,
+          type: data.type || 'domestic',
           image: data.image,
           duration: data.duration || '',
           price: data.price || '',
@@ -174,6 +177,24 @@ export default function PackageFormPage() {
             </select>
           </div>
 
+          {/* Trip Type */}
+          <div>
+            <label className="block text-sm font-semibold text-foreground mb-2">
+              Trip Type *
+            </label>
+            <select
+              required
+              value={formData.type}
+              onChange={(e) =>
+                setFormData({ ...formData, type: e.target.value })
+              }
+              className="w-full px-4 py-2 border border-border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+            >
+              <option value="domestic">Domestic</option>
+              <option value="international">International</option>
+            </select>
+          </div>
+
           {/* Description */}
           <div>
             <label className="block text-sm font-semibold text-foreground mb-2">
@@ -191,25 +212,16 @@ export default function PackageFormPage() {
             />
           </div>
 
-          {/* Image URL */}
+          {/* Image Upload */}
           <div>
             <label className="block text-sm font-semibold text-foreground mb-2">
-              Image URL
+              Package Image *
             </label>
-            <div className="flex gap-2">
-              <input
-                type="url"
-                value={formData.image}
-                onChange={(e) =>
-                  setFormData({ ...formData, image: e.target.value })
-                }
-                placeholder="https://..."
-                className="flex-1 px-4 py-2 border border-border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-              />
-              <Button type="button" variant="outline" size="icon">
-                <ImagePlus className="w-4 h-4" />
-              </Button>
-            </div>
+            <ImageUpload
+              value={formData.image}
+              onChange={(url) => setFormData({ ...formData, image: url })}
+              onRemove={() => setFormData({ ...formData, image: '' })}
+            />
           </div>
 
           {/* Duration and Price */}

@@ -1,69 +1,63 @@
-import { connectDB } from '@/lib/mongodb'
-import { Package } from '@/lib/models'
-import {
-  useMockData,
-  getPackages,
-  createPackage,
-} from '@/lib/mockData'
-import { NextRequest, NextResponse } from 'next/server'
+import { connectDB } from '@/lib/mongodb';
+import { Package } from '@/lib/models';
+import { useMockData, getPackages, createPackage } from '@/lib/mockData';
+import { NextRequest, NextResponse } from 'next/server';
 
 export async function GET(request: NextRequest) {
   try {
+    const { searchParams } = new URL(request.url);
+    const category = searchParams.get('category') || undefined;
+    const type = searchParams.get('type') || undefined;
+    const publishedParam = searchParams.get('published');
+    const published = publishedParam === 'true' ? true : publishedParam === 'false' ? false : undefined;
+
     if (useMockData) {
-      return NextResponse.json(getPackages())
+      const data = getPackages({ category, type, published });
+      return NextResponse.json(data);
     }
 
-    await connectDB()
+    await connectDB();
 
-    const { searchParams } = new URL(request.url)
-    const category = searchParams.get('category')
-    const published = searchParams.get('published')
+    const query: any = {};
+    if (category) query.category = category;
+    if (type) query.type = type;
+    if (published !== undefined) query.published = published;
 
-    let query: any = {}
-    if (category) query.category = category
-    if (published !== null) query.published = published === 'true'
-
-    const packages = await Package.find(query).sort({ createdAt: -1 })
-
-    return NextResponse.json(packages)
+    const packages = await Package.find(query).sort({ createdAt: -1 });
+    return NextResponse.json(packages);
   } catch (error) {
-    console.error('Error fetching packages:', error)
-    return NextResponse.json(
-      { error: 'Internal server error' },
-      { status: 500 }
-    )
+    console.error('Error in GET packages:', error);
+    return NextResponse.json({ error: 'Internal server error' }, { status: 500 });
   }
 }
 
 export async function POST(request: NextRequest) {
   try {
-    const data = await request.json()
+    const body = await request.json();
 
     if (useMockData) {
-      const packageData = createPackage(data)
-      return NextResponse.json(packageData, { status: 201 })
+      const result = createPackage(body);
+      return NextResponse.json(result, { status: 201 });
     }
 
-    await connectDB()
+    await connectDB();
 
-    const packageData = await Package.create({
-      title: data.title,
-      description: data.description,
-      category: data.category,
-      image: data.image,
-      duration: data.duration,
-      price: data.price,
-      highlights: data.highlights || [],
-      itinerary: data.itinerary || [],
-      published: data.published !== false,
-    })
+    const newPackage = await Package.create({
+      title: body.title,
+      description: body.description,
+      category: body.category,
+      type: body.type || 'domestic',
+      image: body.image,
+      duration: body.duration,
+      price: body.price,
+      highlights: body.highlights || [],
+      itinerary: body.itinerary || [],
+      published: body.published !== false,
+    });
 
-    return NextResponse.json(packageData, { status: 201 })
+    return NextResponse.json(newPackage, { status: 201 });
   } catch (error) {
-    console.error('Error creating package:', error)
-    return NextResponse.json(
-      { error: 'Internal server error' },
-      { status: 500 }
-    )
+    console.error('Error in POST packages:', error);
+    return NextResponse.json({ error: 'Internal server error' }, { status: 500 });
   }
 }

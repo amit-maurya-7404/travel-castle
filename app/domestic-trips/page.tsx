@@ -1,17 +1,10 @@
 'use client'
 
-import { useState } from 'react'
-import Link from 'next/link'
-import Image from 'next/image'
-import { Card } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
-import { Sparkles, MapPin, Users, Calendar, Clock, Star } from 'lucide-react'
+import { Sparkles } from 'lucide-react'
 import { PackageCard } from '@/components/ui/PackageCard'
+
 export default function DomesticTrips() {
-  const [tripType, setTripType] = useState('all')
-
-  const filteredTrips = tripType === 'all' ? domesticTrips : domesticTrips.filter(trip => trip.type === tripType)
-
   return (
     <div className="min-h-screen bg-background pt-24">
 
@@ -33,28 +26,6 @@ export default function DomesticTrips() {
         </div>
       </section>
 
-      {/* Filters */}
-      <section className="py-8 bg-background border-b border-border/50">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex gap-4 flex-wrap justify-center">
-            {['all', 'north', 'south', 'east', 'west'].map((filter) => (
-              <Button
-                key={filter}
-                variant={tripType === filter ? 'default' : 'outline'}
-                onClick={() => setTripType(filter)}
-                className={`transition-all duration-300 ${
-                  tripType === filter
-                    ? 'bg-primary text-white border-primary shadow-glow-primary hover-lift'
-                    : 'border-border hover:border-primary text-foreground hover:bg-primary/5'
-                }`}
-              >
-                {filter.charAt(0).toUpperCase() + filter.slice(1)} India
-              </Button>
-            ))}
-          </div>
-        </div>
-      </section>
-
       {/* Trips Grid */}
       <section className="py-20 bg-gradient-to-b from-background via-primary/5 to-background relative overflow-hidden">
         <div className="absolute inset-0 overflow-hidden pointer-events-none">
@@ -64,7 +35,7 @@ export default function DomesticTrips() {
 
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
           <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8 stagger-children">
-            {filteredTrips.map((trip, idx) => (
+            {domesticTrips.map((trip, idx) => (
               <PackageCard key={idx} {...trip} />
             ))}
           </div>
@@ -112,7 +83,6 @@ const domesticTrips = [
     rating: 4.9,
     reviews: '(12k+)',
     isBestSeller: true,
-    type: 'north'
   },
   {
     id: 'rajasthan-royal',
@@ -128,7 +98,6 @@ const domesticTrips = [
     rating: 4.8,
     reviews: '(8k+)',
     isBestSeller: false,
-    type: 'west'
   },
   {
     id: 'kerala-backwaters',
@@ -144,7 +113,6 @@ const domesticTrips = [
     rating: 4.7,
     reviews: '(5k+)',
     isBestSeller: true,
-    type: 'south'
   },
   {
     id: 'goa-beach',
@@ -160,7 +128,6 @@ const domesticTrips = [
     rating: 4.6,
     reviews: '(15k+)',
     isBestSeller: false,
-    type: 'west'
   },
   {
     id: 'darjeeling-sikkim',
@@ -176,7 +143,6 @@ const domesticTrips = [
     rating: 4.8,
     reviews: '(6k+)',
     isBestSeller: true,
-    type: 'east'
   },
   {
     id: 'andaman-islands',
@@ -192,6 +158,5 @@ const domesticTrips = [
     rating: 4.9,
     reviews: '(9k+)',
     isBestSeller: false,
-    type: 'east'
   }
 ]

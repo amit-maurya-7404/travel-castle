@@ -5,14 +5,16 @@ import { NextRequest, NextResponse } from 'next/server'
 
 export async function GET(request: NextRequest) {
   try {
+    const { searchParams } = new URL(request.url)
+    const published = searchParams.get('published')
+
     if (useMockData) {
-      return NextResponse.json(getBlogs())
+      return NextResponse.json(getBlogs({
+        published: published === 'true' ? true : published === 'false' ? false : undefined
+      }))
     }
 
     await connectDB()
-
-    const { searchParams } = new URL(request.url)
-    const published = searchParams.get('published')
 
     let query: any = {}
     if (published !== null) query.published = published === 'true'

@@ -5,14 +5,17 @@ import { NextRequest, NextResponse } from 'next/server'
 
 export async function GET(request: NextRequest) {
   try {
+    const { searchParams } = new URL(request.url)
+    const category = searchParams.get('category')
+    const published = searchParams.get('published')
+
     if (useMockData) {
-      return NextResponse.json(getGallery())
+      return NextResponse.json(getGallery({
+        published: published === 'true' ? true : published === 'false' ? false : undefined
+      }))
     }
 
     await connectDB()
-
-    const { searchParams } = new URL(request.url)
-    const category = searchParams.get('category')
 
     let query: any = {}
     if (category) query.category = category

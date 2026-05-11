@@ -56,7 +56,7 @@ export default function PackageDetail({ params }: { params: Promise<{ id: string
     <div className="min-h-screen bg-[#050505] text-white selection:bg-primary/30">
 
       {/* Premium Hero Section */}
-      <section className="relative h-[70vh] min-h-[500px] w-full flex items-end pb-12 pt-20">
+      <section className="relative h-[80vh] min-h-[500px] w-full flex items-end pb-12 pt-20">
         <div className="absolute inset-0 z-0">
           <Image
             src={packageDetails.heroImage}
@@ -83,7 +83,7 @@ export default function PackageDetail({ params }: { params: Promise<{ id: string
               <h1 className="text-4xl md:text-6xl lg:text-7xl font-extrabold text-white mb-6 leading-[1.1] drop-shadow-2xl tracking-tight">
                 {packageDetails.title}
               </h1>
-              
+
               <div className="flex flex-wrap gap-3">
                 <div className="flex items-center gap-2 bg-black/40 backdrop-blur-md px-4 py-2.5 rounded-xl border border-white/10 text-white shadow-xl">
                   <Users className="w-4 h-4 text-primary" />
@@ -116,7 +116,7 @@ export default function PackageDetail({ params }: { params: Promise<{ id: string
       <section className="py-12 bg-[#050505] relative z-20">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex flex-col lg:flex-row gap-12">
-            
+
             {/* Left Content (Tabs & Information) */}
             <div className="w-full lg:w-[65%] xl:w-[70%]">
               <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
@@ -267,7 +267,7 @@ export default function PackageDetail({ params }: { params: Promise<{ id: string
             {/* Right Content (Sticky Sidebar Widget) */}
             <div className="w-full lg:w-[35%] xl:w-[30%]">
               <div className="sticky top-28 space-y-6">
-                
+
                 {/* Costing Widget */}
                 <Card className="p-6 bg-white/5 border border-white/10 rounded-3xl shadow-2xl relative overflow-hidden group backdrop-blur-xl">
                   <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-primary to-green-400 group-hover:h-2 transition-all duration-300"></div>
@@ -278,7 +278,7 @@ export default function PackageDetail({ params }: { params: Promise<{ id: string
                     </div>
                     <span className="text-gray-400 text-xs mt-1 block">per person (Triple Sharing)</span>
                   </div>
-                  
+
                   <div className="space-y-3 mb-6">
                     <div className="flex justify-between items-center p-3 bg-white/5 rounded-xl text-sm border border-white/5">
                       <span className="text-gray-400 flex items-center gap-2"><Clock className="w-4 h-4" /> Duration</span>
@@ -293,7 +293,7 @@ export default function PackageDetail({ params }: { params: Promise<{ id: string
                   <Button className="w-full h-14 bg-gradient-to-r from-primary to-green-500 hover:from-primary/90 hover:to-green-500/90 text-white font-bold text-lg rounded-xl shadow-[0_0_20px_rgba(var(--primary-rgb),0.3)] hover:scale-[1.02] transition-transform">
                     Book Now
                   </Button>
-                  
+
                   <div className="text-center mt-4 bg-primary/10 rounded-lg p-2 border border-primary/20">
                     <p className="text-xs text-primary font-bold">
                       *Pay a token amount of ₹5000/- to block your seat.
@@ -310,7 +310,7 @@ export default function PackageDetail({ params }: { params: Promise<{ id: string
                     <h3 className="text-xl font-bold text-white">Wanderlust Calling?</h3>
                   </div>
                   <p className="text-sm text-gray-400 mb-6 font-light">Allow our experts to call you back & help you plan!</p>
-                  
+
                   <form className="space-y-4">
                     <input type="text" placeholder="Your Name" className="w-full h-12 px-4 rounded-xl bg-black/40 border border-white/10 text-white focus:outline-none focus:border-primary transition-colors placeholder:text-gray-500" />
                     <input type="tel" placeholder="Phone Number" className="w-full h-12 px-4 rounded-xl bg-black/40 border border-white/10 text-white focus:outline-none focus:border-primary transition-colors placeholder:text-gray-500" />
@@ -326,7 +326,7 @@ export default function PackageDetail({ params }: { params: Promise<{ id: string
           </div>
         </div>
       </section>
-      
+
       {/* Floating WhatsApp */}
       <a href="https://wa.me/919876543210" target="_blank" rel="noopener noreferrer" className="fixed bottom-6 right-6 w-14 h-14 bg-green-500 rounded-full flex items-center justify-center shadow-[0_0_20px_rgba(34,197,94,0.4)] hover:scale-110 transition-transform z-50 cursor-pointer">
         <MessageCircle className="w-7 h-7 text-white" />

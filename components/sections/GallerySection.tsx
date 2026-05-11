@@ -1,5 +1,19 @@
+'use client'
+
 import Image from 'next/image'
 import { Sparkles, Camera } from 'lucide-react'
+
+
+
+import {
+  Carousel,
+  CarouselContent,
+  CarouselItem,
+  CarouselNext,
+  CarouselPrevious,
+} from "@/components/ui/carousel"
+
+import { useState, useEffect } from 'react'
 
 const galleryImages = [
   '/images/hero-destination.jpg',
@@ -12,22 +26,22 @@ const galleryImages = [
   '/images/hero-destination.jpg',
 ]
 
-import {
-  Carousel,
-  CarouselContent,
-  CarouselItem,
-  CarouselNext,
-  CarouselPrevious,
-} from "@/components/ui/carousel"
-
 export function GallerySection() {
+  const [isMounted, setIsMounted] = useState(false)
+
+  useEffect(() => {
+    setIsMounted(true)
+  }, [])
+
+  if (!isMounted) return null
+
   return (
     <section className="py-24 bg-background relative overflow-hidden">
       <div className="absolute inset-0 overflow-hidden pointer-events-none">
         <div className="absolute w-[500px] h-[500px] bg-primary/5 rounded-full blur-[100px] top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2"></div>
       </div>
 
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
+      <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
         <div className="text-center mb-16 animate-slide-in-up flex flex-col items-center">
           <div className="inline-flex items-center gap-2 mb-4 px-4 py-1.5 rounded-full bg-primary/10 border border-primary/20">
             <Camera className="w-4 h-4 text-primary" />
@@ -47,6 +61,7 @@ export function GallerySection() {
             opts={{
               align: "start",
               loop: true,
+              watchDrag: true,
             }}
             className="w-full"
           >

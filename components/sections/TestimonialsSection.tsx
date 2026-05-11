@@ -1,32 +1,37 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import Image from 'next/image'
 import { Card } from '@/components/ui/card'
-import { Button } from '@/components/ui/button'
-import { Sparkles, ChevronLeft, ChevronRight, Quote } from 'lucide-react'
+import { Sparkles, Quote } from 'lucide-react'
+import {
+  Carousel,
+  CarouselContent,
+  CarouselItem,
+  CarouselNext,
+  CarouselPrevious,
+} from "@/components/ui/carousel"
+
 import { testimonials } from '@/constants/data'
 
 export function TestimonialsSection() {
-  const [testimonialIndex, setTestimonialIndex] = useState(0)
+  const [isMounted, setIsMounted] = useState(false)
 
-  const handleNextTestimonial = () => {
-    setTestimonialIndex((prev) => (prev + 1) % testimonials.length)
-  }
+  useEffect(() => {
+    setIsMounted(true)
+  }, [])
 
-  const handlePrevTestimonial = () => {
-    setTestimonialIndex((prev) => (prev - 1 + testimonials.length) % testimonials.length)
-  }
+  if (!isMounted) return null
 
   return (
-    <section className="py-24 bg-gradient-to-b from-background via-primary/5 to-background relative overflow-hidden">
-      {/* Dynamic Background Elements */}
+    <section className="py-24 bg-background relative overflow-hidden">
+      {/* Premium Background Elements */}
       <div className="absolute inset-0 overflow-hidden pointer-events-none">
-        <div className="absolute w-[800px] h-[800px] bg-primary/5 rounded-full blur-[120px] -top-64 -right-64 animate-pulse-slow"></div>
-        <div className="absolute w-[600px] h-[600px] bg-green-500/5 rounded-full blur-[100px] -bottom-48 -left-48 animate-pulse-slow [animation-delay:3s]"></div>
+        <div className="absolute w-[800px] h-[800px] bg-primary/10 rounded-full blur-[120px] -top-64 -right-64 animate-float opacity-50"></div>
+        <div className="absolute w-[600px] h-[600px] bg-green-500/10 rounded-full blur-[100px] -bottom-48 -left-48 animate-float-delayed opacity-50"></div>
       </div>
 
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
+      <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
         <div className="mb-16 animate-slide-in-up flex flex-col items-center text-center">
           <div className="inline-flex items-center gap-2 mb-4 px-4 py-1.5 rounded-full bg-primary/10 border border-primary/20">
             <Sparkles className="w-4 h-4 text-primary" />
@@ -40,88 +45,88 @@ export function TestimonialsSection() {
           </p>
         </div>
 
-        <div className="relative max-w-4xl mx-auto">
-          {/* Frosted Glass Testimonial Card */}
-          <div className="relative">
-            <div className="absolute -inset-1 bg-gradient-to-r from-primary/30 to-green-500/30 rounded-[2.5rem] blur-xl opacity-50"></div>
-            
-            <Card className="relative p-8 md:p-12 border-0 bg-white/5 backdrop-blur-2xl rounded-[2.5rem] shadow-[0_20px_50px_rgba(0,0,0,0.2)]">
-              <Quote className="absolute top-8 right-8 w-16 h-16 text-primary/10 transform rotate-180" />
-              
-              <div className="flex flex-col md:flex-row gap-8 items-center md:items-start text-center md:text-left">
-                {/* Avatar with Glow */}
-                <div className="relative w-28 h-28 md:w-36 md:h-36 rounded-full flex-shrink-0 overflow-hidden border-4 border-white/10 shadow-[0_0_30px_rgba(var(--primary-rgb),0.3)]">
-                  <Image
-                    src={testimonials[testimonialIndex].avatar}
-                    alt={testimonials[testimonialIndex].author}
-                    fill
-                    className="object-cover"
-                  />
-                  <div className="absolute inset-0 ring-1 ring-inset ring-black/10 rounded-full"></div>
-                </div>
+        <div className="relative max-w-7xl mx-auto px-4 md:px-12">
+          <Carousel
+            opts={{
+              align: "start",
+              loop: true,
+              watchDrag: true,
+            }}
+            className="w-full"
+          >
+            <CarouselContent className="-ml-4">
+              {testimonials.map((testimonial, idx) => (
+                <CarouselItem key={idx} className="pl-4 basis-full md:basis-1/2 lg:basis-1/3">
+                  <div className="p-2 h-full">
+                    <Card className="relative p-6 md:p-8 border-0 bg-white/10 backdrop-blur-2xl rounded-2xl  overflow-hidden group h-full flex flex-col border border-white/5">
+                      {/* Gradient Glow */}
+                      <div className="absolute -inset-1 bg-gradient-to-r from-primary/10 to-green-500/10 rounded-2xl blur-lg opacity-0 group-hover:opacity-100 transition-opacity duration-700"></div>
 
-                <div className="flex-grow">
-                  <div className="flex items-center justify-center md:justify-start gap-2 mb-6">
-                    <span className="bg-primary/20 text-primary text-xs font-bold px-3 py-1 rounded-full border border-primary/30">
-                      Verified Traveler
-                    </span>
-                  </div>
-                  
-                  <p className="text-xl md:text-2xl text-foreground mb-8 leading-relaxed font-light italic text-gray-200">
-                    "{testimonials[testimonialIndex].text}"
-                  </p>
-                  
-                  <div>
-                    <p className="text-xl font-bold text-white mb-1">
-                      {testimonials[testimonialIndex].author}
-                    </p>
-                    <p className="text-sm font-medium text-primary tracking-wide uppercase">
-                      Traveled to {testimonials[testimonialIndex].destination}
-                    </p>
-                  </div>
-                </div>
-              </div>
-            </Card>
-          </div>
+                      <Quote className="absolute top-6 right-6 w-12 h-12 text-primary/10 transform rotate-180" />
 
-          {/* Navigation Controls */}
-          <div className="flex flex-col sm:flex-row items-center justify-between mt-10 gap-6">
-            {/* Dots Indicator */}
-            <div className="flex gap-3">
-              {testimonials.map((_, idx) => (
-                <button
-                  key={idx}
-                  onClick={() => setTestimonialIndex(idx)}
-                  className={`h-2 rounded-full transition-all duration-300 ${
-                    idx === testimonialIndex 
-                      ? 'w-8 bg-gradient-to-r from-primary to-green-400 shadow-[0_0_10px_rgba(var(--primary-rgb),0.5)]' 
-                      : 'w-2 bg-white/20 hover:bg-white/40'
-                  }`}
-                  aria-label={`Go to testimonial ${idx + 1}`}
-                />
+                      <div className="relative z-10 flex flex-col h-full">
+                        <div className="flex items-center gap-4 mb-6">
+                          {/* Avatar */}
+                          <div className="relative w-14 h-14 rounded-xl flex-shrink-0 overflow-hidden border border-white/10 ">
+                            {testimonial.avatar ? (
+                              <Image
+                                src={testimonial.avatar}
+                                alt={testimonial.author}
+                                fill
+                                className="object-cover"
+                              />
+                            ) : (
+                              <div className="w-full h-full bg-primary/20 flex items-center justify-center text-primary font-bold text-xl">
+                                {testimonial.author.charAt(0)}
+                              </div>
+                            )}
+                          </div>
+                          <div>
+                            <p className="text-lg font-bold text-black mb-0">
+                              {testimonial.author}
+                            </p>
+                            <div className="flex gap-1 mt-1">
+                              {[...Array(5)].map((_, i) => (
+                                <Sparkles key={i} className="w-3 h-3 text-yellow-500 fill-yellow-500" />
+                              ))}
+                            </div>
+                          </div>
+                        </div>
+
+                        <p className="text-base md:text-[1.2vw] text-black mb-8 leading-relaxed font-normal  flex-grow">
+                          "{testimonial.text}"
+                        </p>
+
+                        <div className="mt-auto pt-4 border-t border-white/10 flex items-center justify-between">
+                          <p className="text-xs font-semibold text-primary tracking-widest uppercase">
+                            {testimonial.destination}
+                          </p>
+                          <div className="flex items-center gap-1.5 bg-primary/10 px-2.5 py-1 rounded-full border border-primary/20">
+                            <div className="w-1 h-1 rounded-full bg-primary animate-pulse"></div>
+                            <span className="text-primary text-[10px] font-bold uppercase tracking-tighter">
+                              Verified
+                            </span>
+                          </div>
+                        </div>
+                      </div>
+                    </Card>
+                  </div>
+                </CarouselItem>
               ))}
+            </CarouselContent>
+
+            {/* Professional Navigation */}
+            <div className="hidden md:block">
+              <CarouselPrevious className="-left-16 size-12 bg-background/50 backdrop-blur-xl border-border/50 text-foreground hover:bg-primary hover:text-white transition-all duration-300" />
+              <CarouselNext className="-right-16 size-12 bg-background/50 backdrop-blur-xl border-border/50 text-foreground hover:bg-primary hover:text-white transition-all duration-300" />
             </div>
 
-            <div className="flex gap-4">
-              <Button
-                variant="outline"
-                size="icon"
-                onClick={handlePrevTestimonial}
-                className="rounded-full w-12 h-12 border-white/10 bg-white/5 hover:bg-primary hover:border-primary text-white transition-all duration-300 shadow-lg"
-              >
-                <ChevronLeft className="w-6 h-6" />
-              </Button>
-              <Button
-                variant="outline"
-                size="icon"
-                onClick={handleNextTestimonial}
-                className="rounded-full w-12 h-12 border-white/10 bg-white/5 hover:bg-primary hover:border-primary text-white transition-all duration-300 shadow-lg"
-              >
-                <ChevronRight className="w-6 h-6" />
-              </Button>
+            {/* Mobile Navigation */}
+            <div className="flex justify-center gap-4 mt-8 md:hidden">
+              <CarouselPrevious className="relative inset-0 translate-y-0 bg-white/5" />
+              <CarouselNext className="relative inset-0 translate-y-0 bg-white/5" />
             </div>
-          </div>
-
+          </Carousel>
         </div>
       </div>
     </section>

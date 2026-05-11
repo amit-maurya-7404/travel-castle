@@ -5,7 +5,7 @@ import { Star, MapPin } from 'lucide-react'
 
 export function HeroSection() {
   return (
-    <section className="relative min-h-[90vh] flex flex-col justify-center pt-24 pb-12 overflow-hidden">
+    <section className="relative min-h-[90vh] flex flex-col justify-center pt-24 md:pt-14 pb-12 overflow-hidden">
       {/* Background Image */}
       <div className="absolute inset-0 z-0">
         <Image

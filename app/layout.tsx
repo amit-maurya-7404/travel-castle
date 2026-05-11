@@ -43,7 +43,7 @@ export default function RootLayout({
         <main className="flex-grow">
           {children}
         </main>
-        <Footer />
+        {/* <Footer /> */}
         {process.env.NODE_ENV === 'production' && <Analytics />}
       </body>
     </html>

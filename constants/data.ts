@@ -93,19 +93,34 @@ export const packages = [
 
 export const blogs = [
   {
+    id: 'blog-1',
     title: 'Hidden Gems of Mountain Valleys',
     description: 'Discover hidden gems and local experiences that will change your perspective on travel.',
     image: '/images/blog-1.jpg',
   },
   {
+    id: 'blog-2',
     title: 'Exploring Ancient Temples & Culture',
     description: 'Journey through time and immerse yourself in centuries of history and tradition.',
     image: '/images/blog-2.jpg',
   },
   {
+    id: 'blog-3',
     title: 'Coastal Towns: A Vibrant Adventure',
     description: 'Experience the colorful charm of coastal living and embrace the Mediterranean lifestyle.',
     image: '/images/blog-3.jpg',
+  },
+  {
+    id: 'blog-4',
+    title: 'Mountain Retreats & Serenity',
+    description: 'Find peace in the high altitudes with our guide to the best mountain escapes.',
+    image: '/images/hero-destination.jpg',
+  },
+  {
+    id: 'blog-5',
+    title: 'Desert Nights: Under the Stars',
+    description: 'A magical guide to experiencing the silence and beauty of the desert at night.',
+    image: '/images/package-corporate.jpg',
   },
 ]
 
@@ -214,5 +229,35 @@ export const groupTrips = [
     rating: 4.9,
     reviews: '(5k+)',
     isBestSeller: true,
+  },
+  {
+    id: 'ladakh-group-trip',
+    title: 'Ladakh Adventure',
+    locationTag: 'Manali to Leh',
+    description: 'The ultimate road trip through the highest motorable passes in the world.',
+    image: '/images/package-adventure.jpg',
+    duration: '9N/10D',
+    months: 'Jun - Sep',
+    originalPrice: '45,000',
+    price: '38,000',
+    discountTag: 'Upto 7000 OFF',
+    rating: 4.8,
+    reviews: '(3k+)',
+    isBestSeller: false,
+  },
+  {
+    id: 'spiti-group-trip',
+    title: 'Spiti Valley Explorer',
+    locationTag: 'Delhi to Spiti',
+    description: 'Discover the "Middle Land" with its ancient monasteries and stark landscapes.',
+    image: '/images/package-solo.jpg',
+    duration: '7N/8D',
+    months: 'Jul - Sep',
+    originalPrice: '32,000',
+    price: '26,500',
+    discountTag: 'Upto 5500 OFF',
+    rating: 4.7,
+    reviews: '(2k+)',
+    isBestSeller: false,
   },
 ]

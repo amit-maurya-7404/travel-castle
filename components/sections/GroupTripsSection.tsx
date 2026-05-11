@@ -1,11 +1,7 @@
 'use client'
 
-import { useState } from 'react'
-import Image from 'next/image'
-import Link from 'next/link'
-import { Button } from '@/components/ui/button'
+import { useState, useEffect } from 'react'
 import { Sparkles } from 'lucide-react'
-import { groupTrips } from '@/constants/data'
 import { PackageCard } from '@/components/ui/PackageCard'
 import {
   Carousel,
@@ -14,18 +10,21 @@ import {
   CarouselNext,
   CarouselPrevious,
 } from "@/components/ui/carousel"
+import { groupTrips } from '@/constants/data'
 
 export function GroupTripsSection() {
-  const [tripFilter, setTripFilter] = useState('all')
+  const [isMounted, setIsMounted] = useState(false)
+
+  useEffect(() => {
+    setIsMounted(true)
+  }, [])
+
+  if (!isMounted) return null
 
   return (
     <section id="trips" className="py-24 bg-gradient-to-b from-background via-black/5 to-background relative overflow-hidden">
-      <div className="absolute inset-0 overflow-hidden pointer-events-none">
-        <div className="absolute w-[500px] h-[500px] bg-primary/5 rounded-full blur-[100px] -top-36 -left-36 animate-pulse-slow"></div>
-        <div className="absolute w-[500px] h-[500px] bg-green-500/5 rounded-full blur-[100px] -bottom-36 -right-36 animate-pulse-slow [animation-delay:2s]"></div>
-      </div>
 
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
+      <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
         <div className="mb-10 animate-slide-in-up flex flex-col items-center text-center">
           <div className="inline-flex items-center gap-2 mb-4 px-4 py-1.5 rounded-full bg-primary/10 border border-primary/20">
             <Sparkles className="w-4 h-4 text-primary" />
@@ -39,36 +38,18 @@ export function GroupTripsSection() {
           </p>
         </div>
 
-        {/* Premium Filters */}
-        <div className="flex gap-3 justify-center mb-10 flex-wrap">
-          {['all', 'domestic', 'international'].map((filter) => (
-            <button
-              key={filter}
-              onClick={() => setTripFilter(filter)}
-              className={`relative px-6 py-2.5 rounded-full font-medium text-sm transition-all duration-300 overflow-hidden ${tripFilter === filter
-                ? 'text-white shadow-[0_0_20px_rgba(var(--primary-rgb),0.4)] scale-105'
-                : 'text-muted-foreground bg-white/5 border border-white/10 hover:bg-white/10 hover:text-foreground'
-                }`}
-            >
-              {tripFilter === filter && (
-                <span className="absolute inset-0 bg-gradient-to-r from-primary to-green-500 opacity-90 -z-10"></span>
-              )}
-              {filter.charAt(0).toUpperCase() + filter.slice(1)}
-            </button>
-          ))}
-        </div>
-
         {/* Group Trips Carousel */}
         <div className="relative">
           <Carousel
             opts={{
               align: "start",
               loop: true,
+              watchDrag: true,
             }}
             className="w-full"
           >
             <CarouselContent className="-ml-4">
-              {groupTrips.filter(trip => tripFilter === 'all' || trip.type === tripFilter).map((trip, idx) => (
+              {groupTrips.map((trip, idx) => (
                 <CarouselItem key={idx} className="pl-4 basis-[85%] md:basis-1/2 lg:basis-1/3">
                   <div className="p-1">
                     <PackageCard {...trip} />
@@ -80,8 +61,8 @@ export function GroupTripsSection() {
               <CarouselPrevious className="relative inset-0 translate-y-0" />
               <CarouselNext className="relative inset-0 translate-y-0" />
             </div>
-            <CarouselPrevious className="hidden md:flex -left-12 bg-background/50 backdrop-blur-md border-border/50 text-foreground hover:bg-primary hover:text-white transition-all" />
-            <CarouselNext className="hidden md:flex -right-12 bg-background/50 backdrop-blur-md border-border/50 text-foreground hover:bg-primary hover:text-white transition-all" />
+            <CarouselPrevious className="hidden md:flex -left-12 bg-background/50 backdrop-blur-md border-border/50 text-foreground hover:bg-primary hover:text-white transition-all z-20" />
+            <CarouselNext className="hidden md:flex -right-12 bg-background/50 backdrop-blur-md border-border/50 text-foreground hover:bg-primary hover:text-white transition-all z-20" />
           </Carousel>
         </div>
       </div>

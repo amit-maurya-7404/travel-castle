@@ -5,13 +5,21 @@ import { NextRequest, NextResponse } from 'next/server'
 
 export async function GET(request: NextRequest) {
   try {
+    const { searchParams } = new URL(request.url)
+    const published = searchParams.get('published')
+
     if (useMockData) {
-      return NextResponse.json(getReviews())
+      return NextResponse.json(getReviews({
+        published: published === 'true' ? true : published === 'false' ? false : undefined
+      }))
     }
 
     await connectDB()
 
-    const reviews = await Review.find().sort({ createdAt: -1 })
+    let query: any = {}
+    if (published !== null) query.published = published === 'true'
+
+    const reviews = await Review.find(query).sort({ createdAt: -1 })
 
     return NextResponse.json(reviews)
   } catch (error) {

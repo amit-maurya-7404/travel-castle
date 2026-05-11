@@ -1,7 +1,7 @@
 'use client'
 
 import Link from 'next/link'
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { Button } from '@/components/ui/button'
 import { Sparkles } from 'lucide-react'
 import { packages } from '@/constants/data'
@@ -18,13 +18,21 @@ import {
 } from "@/components/ui/carousel"
 
 export function CustomizedPackagesSection() {
+  const [isMounted, setIsMounted] = useState(false)
+
+  useEffect(() => {
+    setIsMounted(true)
+  }, [])
+
+  if (!isMounted) return null
+
   return (
     <section id="packages" className="py-20 bg-secondary relative overflow-hidden">
       <div className="absolute inset-0 overflow-hidden pointer-events-none">
         <div className="absolute w-80 h-80 bg-primary/10 rounded-full blur-3xl top-1/2 -right-40 animate-float"></div>
       </div>
 
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
+      <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
         <div className="mb-14 animate-slide-in-up flex flex-col items-center text-center">
           <div className="inline-flex items-center gap-2 mb-4 px-4 py-1.5 rounded-full bg-primary/10 border border-primary/20">
             <Sparkles className="w-4 h-4 text-primary" />
@@ -44,6 +52,7 @@ export function CustomizedPackagesSection() {
             opts={{
               align: "start",
               loop: true,
+              watchDrag: true,
             }}
             className="w-full"
           >
@@ -91,8 +100,8 @@ export function CustomizedPackagesSection() {
               <CarouselPrevious className="relative inset-0 translate-y-0" />
               <CarouselNext className="relative inset-0 translate-y-0" />
             </div>
-            <CarouselPrevious className="hidden md:flex -left-12 bg-background/50 backdrop-blur-md border-border/50 text-foreground hover:bg-primary hover:text-white transition-all" />
-            <CarouselNext className="hidden md:flex -right-12 bg-background/50 backdrop-blur-md border-border/50 text-foreground hover:bg-primary hover:text-white transition-all" />
+            <CarouselPrevious className="hidden md:flex -left-12 bg-background/50 backdrop-blur-md border-border/50 text-foreground hover:bg-primary hover:text-white transition-all z-20" />
+            <CarouselNext className="hidden md:flex -right-12 bg-background/50 backdrop-blur-md border-border/50 text-foreground hover:bg-primary hover:text-white transition-all z-20" />
           </Carousel>
         </div>
 
