@@ -309,12 +309,15 @@ export default function PackageDetail() {
   }, [packageDetails])
 
   const stays = useMemo(() => {
+    if (packageDetails && 'stays' in packageDetails && Array.isArray(packageDetails.stays)) {
+      return packageDetails.stays
+    }
     return [
       '3-Star Deluxe Hotel Rooms (Room + Breakfast)',
       'Premium Houseboats (where applicable)',
       'Comfortable Alpine Camping Tents'
     ]
-  }, [])
+  }, [packageDetails])
 
   const paymentPolicy = useMemo(() => {
     return [
@@ -463,7 +466,7 @@ export default function PackageDetail() {
                   { id: 'overview', label: 'Overview' },
                   { id: 'itinerary', label: 'Itinerary' },
                   { id: 'batches', label: 'Batches' },
-                  { id: 'costing', label: 'Costing' },
+                  { id: 'costing', label: 'Price' },
                   { id: 'note', label: 'Note' },
                   { id: 'stays', label: 'Stays' },
                   { id: 'inclusions', label: 'Inclusions' },
@@ -704,36 +707,15 @@ export default function PackageDetail() {
 
               {/* COSTING */}
               <section id="costing" className="scroll-mt-36">
-                <h2 className="text-2xl font-bold mb-4 font-sans text-slate-900">Costing Table</h2>
-                <Card className="overflow-hidden border border-slate-200/80 shadow-xs rounded-2xl bg-white">
-                  <div className="overflow-x-auto">
-                    <table className="min-w-full text-left divide-y divide-slate-100">
-                      <thead className="bg-slate-50">
-                        <tr>
-                          <th className="px-5 py-4 text-xs font-bold text-slate-500 uppercase tracking-wider">Option</th>
-                          <th className="px-5 py-4 text-xs font-bold text-slate-500 uppercase tracking-wider">Price</th>
-                        </tr>
-                      </thead>
-                      <tbody className="divide-y divide-slate-100">
-                        {costingDetails.map((item, idx) => {
-                          const isSelected = selections.some(s => s.name === item.label)
-                          return (
-                            <tr key={idx} className="bg-white hover:bg-slate-50/50 transition-colors">
-                              <td className="px-5 py-4 text-slate-700 font-bold flex items-center gap-3">
-                                <input
-                                  type="checkbox"
-                                  checked={isSelected}
-                                  onChange={() => handleSelectOption(item.label, item.value)}
-                                  className="w-4.5 h-4.5 rounded-xs border-slate-350 text-primary focus:ring-primary focus:ring-offset-0 cursor-pointer"
-                                />
-                                <span>{item.label}</span>
-                              </td>
-                              <td className="px-5 py-4 text-slate-900 font-extrabold text-base">{item.value}</td>
-                            </tr>
-                          )
-                        })}
-                      </tbody>
-                    </table>
+                <h2 className="text-2xl font-bold mb-4 font-sans text-slate-900">Trip Price</h2>
+                <Card className="p-6 border border-slate-200/80 shadow-xs rounded-2xl bg-white flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
+                  <div>
+                    <p className="text-xs uppercase tracking-widest text-slate-500 font-bold">Starting Price</p>
+                    <p className="text-3xl font-extrabold text-primary mt-1">₹{packageDetails.price}</p>
+                  </div>
+                  <div className="text-left sm:text-right text-slate-500 text-sm font-medium">
+                    <p>* Per person on twin/triple sharing basis</p>
+                    <p className="text-xs text-slate-400 mt-1">Final pricing may vary depending on customized options, group size, and dates</p>
                   </div>
                 </Card>
               </section>
@@ -887,13 +869,13 @@ export default function PackageDetail() {
 
                   <div>
                     <p className="text-xs uppercase tracking-widest text-slate-500 font-bold">
-                      {selections.length > 0 ? 'Current Selection' : 'Starting Price'}
+                      Starting Price
                     </p>
                     <p className="text-3xl font-extrabold text-primary mt-1.5">
-                      ₹{(selections.length > 0 ? total : lowestPrice).toLocaleString('en-IN')}
+                      ₹{packageDetails.price}
                     </p>
                     <p className="text-xs text-slate-400 font-bold mt-2">
-                      {selections.length > 0 ? `${selections.length} sharing option selected` : 'per person'}
+                      per person
                     </p>
                   </div>
 
@@ -1031,6 +1013,11 @@ function getPackageDetails(id: string) {
       price: '45,000',
       bestTime: 'October - May',
       overview: 'Our honeymoon packages are designed to create magical moments for newlyweds. From private beach villas to mountain retreats, we curate experiences that celebrate love and create lasting memories. Each package includes romantic touches, privacy, and personalized service.',
+      stays: [
+        'Luxury Honeymoon Suites & Villas',
+        'Romantic beach resorts & private island stays',
+        'Premium boutique hotels with jacuzzi facilities'
+      ],
       highlights: [
         'Private romantic dinners with ocean views',
         'Couples spa treatments and massages',
@@ -1141,6 +1128,11 @@ function getPackageDetails(id: string) {
       price: '15,000',
       bestTime: 'Throughout Year',
       overview: 'Our corporate packages are designed to enhance team collaboration, creativity, and morale. From adventure activities to strategic planning sessions, we create memorable experiences that align with your company culture and objectives.',
+      stays: [
+        'Premium 4-Star & 5-Star business hotels',
+        'Luxury corporate retreat resorts with conference halls',
+        'Team-friendly adventure camps & lodges'
+      ],
       highlights: [
         'Team building activities and workshops',
         'Adventure sports and challenges',
@@ -1242,6 +1234,11 @@ function getPackageDetails(id: string) {
       price: '25,000',
       bestTime: 'Throughout Year',
       overview: 'Make your last night of freedom unforgettable with our carefully curated bachelor/bachelorette packages. From beach parties to city adventures, we ensure every moment is filled with excitement, luxury, and fun.',
+      stays: [
+        'Private luxury villas with private swimming pools',
+        'Boutique party-friendly beach resorts',
+        'Premium city-center luxury apartments'
+      ],
       highlights: [
         'Private villa accommodations',
         'Exclusive club access',
@@ -1337,6 +1334,11 @@ function getPackageDetails(id: string) {
       price: '35,000',
       bestTime: 'October - May',
       overview: 'Our family packages are designed to cater to every family member, from toddlers to grandparents. With a mix of adventure, relaxation, and cultural experiences, we ensure everyone has an amazing time.',
+      stays: [
+        'Family-friendly resort hotels with kids club facilities',
+        'Spacious luxury apartments & suites',
+        'Comfortable mid-range hotels in convenient locations'
+      ],
       highlights: [
         'Kid-friendly activities',
         'Family accommodation options',
@@ -1444,6 +1446,11 @@ function getPackageDetails(id: string) {
       price: '25,000',
       bestTime: 'Throughout Year',
       overview: 'Our solo travel packages are designed for independent travelers seeking self-discovery, new experiences, and meaningful connections. Travel at your own pace with the support of our expert guides and fellow solo travelers.',
+      stays: [
+        'Safe & vibrant premium hostels & co-living spaces',
+        'Comfortable boutique guesthouses',
+        '3-star standard hotel rooms'
+      ],
       highlights: [
         'Flexible itineraries',
         'Small group experiences',
@@ -1553,6 +1560,11 @@ function getPackageDetails(id: string) {
       price: '20,000',
       bestTime: 'October - May',
       overview: 'For thrill-seekers and adventure enthusiasts, our adventure packages offer the ultimate adrenaline rush. From mountain treks to water sports, experience the world\'s most exciting destinations with expert guides and top-notch safety measures.',
+      stays: [
+        'Comfortable alpine camping tents & domes',
+        'Rustic mountain lodges & homestays',
+        '3-star base-camp hotel rooms'
+      ],
       highlights: [
         'Extreme adventure activities',
         'Professional expert guides',
@@ -1648,6 +1660,345 @@ function getPackageDetails(id: string) {
           image: '/images/package-corporate.jpg',
           price: '15,000',
           duration: '3 Days'
+        }
+      ]
+    },
+    'best-of-europe-13-days': {
+      title: 'Best of Europe 13 Days',
+      category: 'Group Adventures',
+      description: 'Explore France, Belgium, Netherlands, Germany, Switzerland, Austria and Italy in one grand 13-day adventure.',
+      heroImage: '/images/package-adventure.jpg',
+      duration: '13 Days',
+      groupSize: '15-40 People',
+      location: 'Multiple Countries (Europe)',
+      price: '3,00,000',
+      bestTime: 'May - October',
+      overview: 'Discover the best of Europe in 13 days. From Eiffel Tower in Paris to St. Mark\'s Square in Venice, Lindt Chocolate Home in Switzerland, Grand Place in Brussels, canals of Amsterdam and Colosseum in Rome. A complete grand group adventure.',
+      stays: [
+        '03 Nights accommodation in B&B / Millennium CDG or similar hotel in Paris',
+        '01 Night accommodation in Ramada / Amrath / Van der Valk or similar hotel in Netherlands',
+        '01 Night accommodation in Intercity / Elaya or similar hotel in Germany',
+        '03 Nights accommodation in La Maison / Radisson or similar hotel in Central Switzerland',
+        '01 Night accommodation in Alpenkoning / Hocheder or similar hotel in Innsbruck / Seefeld',
+        '01 Night accommodation in Four Points by Sheraton / Blue Dream or similar hotel in Padova / Ferrara',
+        '01 Night accommodation in Park / Le Fonti or similar hotel in Tuscany',
+        '01 Night accommodation in SHG / Selene / Simon or similar hotel in Rome'
+      ],
+      highlights: [
+        'Private romantic Seine River Cruise',
+        'Palace of Versailles Guided Tour',
+        'Eiffel Tower 3rd (Top) Level Entrance',
+        'Full day excitement and thrill at Disneyland® Paris',
+        'Jungfraujoch - Top of Europe cogwheel train',
+        'Vatican City: Vatican Museums & Sistine Chapel',
+        'Venice Gondola Ride & Private Boat Transfers'
+      ],
+      whyChoose: [
+        'Excursion to Jungfraujoch & Mt. Titlis included',
+        'All major entrance tickets covered',
+        'Expert tour managers and local guides',
+        'Indian Jain/Vegetarian/Non-Vegetarian meals'
+      ],
+      itinerary: [
+        {
+          day: 1,
+          title: 'Arrive into Paris - the City of Romance, Lights and Glamour',
+          description: 'Welcome! Today, we embark on our journey to Paris, a city celebrated for its high fashion, world-famous museums, awe-inspiring landmarks, and captivating cabarets. Upon arrival, you\'ll be warmly welcomed by our Travel Professional, who will guide you to your hotel and provide assistance with the check-in process. Overnight stay at the hotel in Paris. (Dinner)',
+          activities: ['Airport Transfer', 'Hotel Check-in', 'Welcome Dinner']
+        },
+        {
+          day: 2,
+          title: 'Guided Paris City Tour, Eiffel Tower 3rd Level & Palace of Versailles',
+          description: 'Today, we embark on a guided city tour of Paris, where you\'ll have the opportunity to marvel at Place Vendôme, Place de l’Opéra Garnier, Musée d’Orsay, Place de la Concorde, Champs Elysées, Arc de Triomphe, Alexander Bridge, Les Invalides, and more. Following our city exploration, we\'ll ascend to the 3rd Level of the iconic Eiffel Tower (subject to operational status, fallback to 2nd level). Our adventure continues with a visit to the Palace of Versailles, a masterpiece under the French Ministry of Culture. Overnight stay at the hotel in Paris. (Breakfast, Lunch, Dinner)',
+          activities: ['Paris City Tour', 'Eiffel Tower 3rd Level', 'Palace of Versailles Visit']
+        },
+        {
+          day: 3,
+          title: 'Disneyland® Paris, River Seine Cruise & Paris by Night Tour',
+          description: 'Spend an exciting day at Disneyland® Paris, choosing between Disney Park or Walt Disney Studios Park to enjoy thrilling rides, shows, and street parades. Later, treat yourself to a romantic cruise along the Seine River, gliding under historic bridges with views of Notre Dame and Eiffel Tower. Complete the evening with a Paris by Night Tour to witness the City of Light in all its night-time splendour. Overnight stay at the hotel in Paris. (Breakfast, Lunch, Dinner)',
+          activities: ['Disneyland Paris', 'Seine River Cruise', 'Paris by Night Tour']
+        },
+        {
+          day: 4,
+          title: 'Onto Brussels: Grand Place, Manneken Pis & Mini Europe',
+          description: 'Travel to Brussels, capital of Belgium. Visit the Grand Place, widely regarded as one of Europe\'s most beautiful squares, to see the medieval Town Hall and the famous Manneken Pis statue. Next, visit Mini Europe, a miniature park showcasing over 350 European monuments reproduced in fine detail. Overnight stay at the hotel in Netherlands. (Breakfast, Lunch, Dinner)',
+          activities: ['Brussels City Tour', 'Grand Place', 'Manneken Pis', 'Mini Europe Entrance']
+        },
+        {
+          day: 5,
+          title: 'Keukenhof Gardens (till 10th May) / Dutch Village (from 11th May), Amsterdam Canal Cruise, Drive to Germany',
+          description: 'Travel to Lisse to visit the Keukenhof Gardens (until 10th May) showcasing tulips, daffodils, and hyacinths. From 11th May, visit a charming traditional Dutch village near Amsterdam with windmills and wooden houses. Continue to Amsterdam for a glass-topped canal cruise. Later, drive to your hotel in the Frankfurt area. Overnight stay at the hotel in Germany. (Breakfast, Lunch, Dinner)',
+          activities: ['Keukenhof or Dutch Village', 'Amsterdam Canal Cruise', 'Drive to Frankfurt']
+        },
+        {
+          day: 6,
+          title: 'Heidelberg Altstadt, Black Forest Cuckoo Clocks, Rhine Falls Boat Ride & Switzerland',
+          description: 'Drive to Heidelberg Altstadt (Old Town) stretching along the Neckar River and see the Church of the Holy Spirit. Next, visit the heart of the Black Forest for a traditional cuckoo clock demonstration. Later, explore the magnificent Rhine Falls, Europe\'s largest waterfall, with a boat ride. Continue to Switzerland. Overnight stay in Central Switzerland. (Breakfast, Lunch, Dinner)',
+          activities: ['Heidelberg Walking Tour', 'Black Forest Cuckoo Clocks', 'Rhine Falls Boat Ride']
+        },
+        {
+          day: 7,
+          title: 'Jungfraujoch - Top of Europe & Scenic Interlaken',
+          description: 'Embark on an alpine journey to Jungfraujoch. Grindelwald Terminal serves as our starting point, taking the state-of-the-art Eiger Express 3S-Bahn to Eigergletscher station, followed by a cogwheel train to the highest railway station in Europe at 11,333 feet. Visit the Ice Palace and Sphinx Observatory. Later, explore Interlaken. Overnight stay in Central Switzerland. (Breakfast, Lunch, Dinner)',
+          activities: ['Eiger Express Ride', 'Jungfraujoch Cogwheel Train', 'Ice Palace & Sphinx', 'Interlaken Free Time']
+        },
+        {
+          day: 8,
+          title: 'Mt. Titlis Cable Cars & Rotair, Lucerne Orientation, Lindt Home of Chocolate',
+          description: 'Exhilarating trip to Mt. Titlis (3,020m) by revolving cable car (Rotair) and walk the Titlis Cliff Walk suspension bridge. Later, enjoy Lucerne orientation tour (Lion Monument, Kapellbrücke). Conclude with a visit to the Lindt Home of Chocolate in Zurich. Overnight stay in Central Switzerland. (Breakfast, Lunch, Dinner)',
+          activities: ['Rotair Revolving Cable Car', 'Titlis Cliff Walk', 'Lucerne Walking Tour', 'Lindt Chocolate Museum']
+        },
+        {
+          day: 9,
+          title: 'Vaduz Train Ride (Liechtenstein), Swarovski Crystal Museum & Innsbruck (Austria)',
+          description: 'Drive to Vaduz, capital of the Principality of Liechtenstein, and take a guided mini train ride. Next, explore Swarovski Crystal Worlds in Wattens. Proceed to Innsbruck for orientation tour (Maria Theresien Strasse and the Golden Roof). Overnight stay in Innsbruck/Seefeld. (Breakfast, Lunch, Dinner)',
+          activities: ['Vaduz Mini Train', 'Swarovski Crystal Worlds', 'Innsbruck Orientation']
+        },
+        {
+          day: 10,
+          title: 'Venice: Private Boat, St. Mark\'s Square & Gondola Ride',
+          description: 'Travel to Venice. Board private boat to St. Mark\'s Square. View St. Mark\'s Basilica, Bell Tower, Clock Tower, and the Bridge of Sighs. Experience a classic Venetian Gondola ride through picturesque waterways. Overnight stay in Padova/Bologna/Ferrara. (Breakfast, Lunch, Dinner)',
+          activities: ['Venice Boat Transfer', 'St. Mark\'s Square Tour', 'Venetian Gondola Ride']
+        },
+        {
+          day: 11,
+          title: 'Guided Florence City Tour & Leaning Tower of Pisa',
+          description: 'Guided tour of Florence with a local guide. View the Duomo, Campanile, Baptistery, and Piazza Della Signoria. Proceed to Pisa to see the Square of Miracles and Leaning Tower of Pisa. Overnight stay in Tuscany region. (Breakfast, Lunch, Dinner)',
+          activities: ['Florence Guided Tour', 'Piazza Della Signoria', 'Pisa Leaning Tower Photo-stop']
+        },
+        {
+          day: 12,
+          title: 'Vatican City, Sistine Chapel, St. Peter\'s Basilica & Rome Sights',
+          description: 'Travel to Rome. Visit Vatican City, the Vatican Museums, the Sistine Chapel (Michelangelo\'s Last Judgement), and St. Peter\'s Basilica. Orientation tour of Rome including Colosseum (exterior), Trevi Fountain, Roman Forum, and Victor Emmanuel Monument. Overnight stay in Rome. (Breakfast, Lunch, Dinner)',
+          activities: ['Vatican Museums Entrance', 'Sistine Chapel & St. Peter\'s', 'Colosseum & Trevi Fountain']
+        },
+        {
+          day: 13,
+          title: 'Departure: Fly Back Home',
+          description: 'Check out from your hotel and transfer to the airport carrying pleasant memories of your European journey. Safe travels! (Breakfast)',
+          activities: ['Hotel Check-out', 'Airport Transfer']
+        }
+      ],
+      inclusions: [
+        'Accommodation in B&B / Millennium CDG Paris, Ramada / Amrath Netherlands, Intercity / Elaya Germany, La Maison / Radisson Central Switzerland, Alpenkoning / Hocheder Innsbruck, Four Points Padova/Ferrara, Park / Le Fonti Tuscany, SHG / Selene Rome',
+        'Daily Continental buffet breakfast, 11 Indian Jain/Vegetarian lunches, 12 Indian Jain/Vegetarian/Non-Vegetarian dinners',
+        'Eiffel Tower 3rd level tickets (fallback to 2nd level if closed), Versailles Palace guided tour',
+        'Disneyland® Paris entrance (Disney Park or Walt Disney Studios Park), Seine River Cruise, Paris by Night Tour',
+        'Mini Europe entrance in Brussels, Keukenhof entrance (till 10th May), Amsterdam Canal Cruise',
+        'Rhine Falls boat ride, Excursion to Jungfraujoch - Top of Europe, Mt. Titlis cable car & Cliff Walk',
+        'Lindt Home of Chocolate, Vaduz train ride, Swarovski Crystal Museum, Venice boat & Gondola ride',
+        'Florence guided city tour, Rome orientation tour, Vatican Museums & Sistine Chapel',
+        'Services of our Tour Manager or local representatives'
+      ],
+      exclusions: [
+        'Airfare, Passport, POE, Visa fees, and Travel Insurance',
+        'Personal expenses (laundry, minibar, phone calls, alcohol, porterage)',
+        'Any extra meals or activities not included in the regular menus',
+        'GST, TCS, and other taxes as applicable',
+        'Anything which is not specified in the Itinerary'
+      ],
+      bookingInfo: [
+        'Booking subject to RBI / Government regulations',
+        'No refunds for unutilized services',
+        'Land surcharges applicable on certain departure dates',
+        '50% advance payment required to confirm booking'
+      ],
+      relatedPackages: [
+        {
+          id: 'corporate-trips',
+          title: 'Corporate Retreats',
+          description: 'Team building and corporate events',
+          image: '/images/package-corporate.jpg',
+          price: '15,000',
+          duration: '3 Days'
+        },
+        {
+          id: 'adventure-tours',
+          title: 'Adventure Tours',
+          description: 'Thrilling expeditions for adrenaline seekers',
+          image: '/images/package-adventure.jpg',
+          price: '20,000',
+          duration: '5 Days'
+        }
+      ]
+    },
+    'grand-wonders-of-europe-16-days': {
+      title: 'Grand Wonders of Europe 16 Days',
+      category: 'Group Adventures',
+      description: 'Explore the UK, France, Belgium, Netherlands, Germany, Switzerland, Liechtenstein, Austria, Italy, and Vatican City in one epic 16-day grand tour.',
+      heroImage: '/images/package-adventure.jpg',
+      duration: '16 Days',
+      groupSize: '15-40 People',
+      location: 'Multiple Countries (Europe)',
+      price: '3,71,000',
+      bestTime: 'May - October',
+      overview: 'Experience the ultimate grand tour of Europe. From the London Eye in the UK to the canals of Amsterdam, Jungfraujoch Top of Europe, Mt. Titlis Cliff Walk, Venice Gondola, Vatican Museums, and Colosseum. Fully managed premium group trip.',
+      stays: [
+        '03 Nights accommodation in Atrium / Courtyard by Mariott LHR / Sheraton Skyline or similar Hotel in London',
+        '03 Nights accommodation in B&B / Millennium CDG or similar hotel in Paris',
+        '01 Night accommodation in Amrath / Van der Valk or similar hotel in Netherlands',
+        '01 Night accommodation in Intercity / Elaya or similar hotel in Germany',
+        '03 Nights accommodation in La Maison / Radisson or similar hotel in Central Switzerland',
+        '01 Night accommodation in Alpenkoning / Hocheder or similar hotel in Innsbruck / Seefeld',
+        '01 Night accommodation in Four Points by Sheraton / Blue Dream or similar hotel in Padova / Ferrara',
+        '01 Night accommodation in Park / Le Fonti or similar hotel in Tuscany',
+        '01 Night accommodation in SHG / Selene / Simon or similar hotel in Rome'
+      ],
+      highlights: [
+        'London Eye Ride & Madame Tussauds Wax Museum',
+        'Lord\'s Cricket Ground & Tower of London Entrance',
+        'Highspeed Eurostar Train from London to Paris',
+        'Eiffel Tower 3rd Level & Versailles Palace Guided Tour',
+        'Jungfraujoch - Top of Europe & Mount Titlis Rotair',
+        'Venice Private Boat & Classic Gondola Ride',
+        'Vatican Museums, Sistine Chapel & Colosseum'
+      ],
+      whyChoose: [
+        'Highspeed Eurostar Train London to Paris included',
+        'Jungfraujoch & Mt. Titlis revolving cable cars included',
+        'Expert tour managers and local guides throughout',
+        'Daily Continental breakfast & Indian Jain/Veg lunches/dinners'
+      ],
+      itinerary: [
+        {
+          day: 1,
+          title: 'Arrive into London - Capital of England and the United Kingdom',
+          description: 'Welcome to London! Upon arrival, you\'ll be warmly welcomed by our Tour Manager and guided to your hotel for a smooth check-in process. Spend the rest of the day unwinding and enjoying the comforts of your accommodation. Overnight stay at the hotel in London. (Dinner)',
+          activities: ['Airport Transfer', 'Hotel Check-in', 'Welcome Dinner']
+        },
+        {
+          day: 2,
+          title: 'Guided London City Tour, Changing of Guards, Madame Tussauds, London Eye & Thames Cruise',
+          description: 'Explore London\'s iconic landmarks with our local guide: Big Ben, Parliament, Westminster Abbey, Trafalgar Square, Piccadilly Circus, Tower Bridge, and Hyde Park. Witness Changing of the Guards at Buckingham Palace (subject to operation). Visit Madame Tussauds Wax Museum, ride the 135m tall London Eye overlooking the river Thames, and enjoy a scenic Thames River Cruise. Overnight stay at the hotel in London. (Breakfast, Lunch, Dinner)',
+          activities: ['London City Tour', 'Madame Tussauds Entrance', 'London Eye Ride', 'Thames River Cruise']
+        },
+        {
+          day: 3,
+          title: 'Lord\'s Cricket Ground (Home of Cricket), Tower of London & Oxford Street Shopping',
+          description: 'Go behind the scenes at the legendary Lord\'s Cricket Ground (or Oval Cricket Ground if matches are scheduled). See the Grade II* Victorian Pavilion, Long Room, dressing rooms, and MCC Museum. Later, visit the historic Tower of London (UNESCO Site) to marvel at the Crown Jewels and the Kohinoor diamond. Spend the evening shopping at Oxford Street. Overnight stay at the hotel in London. (Breakfast, Lunch, Dinner)',
+          activities: ['Lord\'s Cricket Ground Tour', 'Tower of London Entrance', 'Oxford Street Free Time']
+        },
+        {
+          day: 4,
+          title: 'Proceed to Paris via High-Speed Eurostar Train',
+          description: 'Board the high-speed Eurostar train connecting London to Paris through the Channel Tunnel, enjoying the English and French countryside en route. Arrive in the fashionable city of Paris, check in at the hotel, and relax. Overnight stay at the hotel in Paris. (Breakfast, Packed Lunch, Dinner)',
+          activities: ['Eurostar Train Journey', 'Paris Hotel Check-in', 'Group Dinner']
+        },
+        {
+          day: 5,
+          title: 'Guided Paris City Tour, Eiffel Tower 3rd Level, Palace of Versailles & Seine River Cruise',
+          description: 'Embark on a guided tour of Paris (Place Vendôme, Opéra Garnier, Musée d’Orsay, Place de la Concorde, Champs Elysées, Arc de Triomphe). Ascend to the 3rd Level of the Eiffel Tower for panoramic views. Visit the spectacular Palace of Versailles. Conclude with a romantic Seine River Cruise and a Paris by Night Tour to witness the City of Light illuminated. Overnight stay at the hotel in Paris. (Breakfast, Lunch, Dinner)',
+          activities: ['Paris Guided Tour', 'Eiffel Tower 3rd Level', 'Palace of Versailles Visit', 'River Seine Cruise']
+        },
+        {
+          day: 6,
+          title: 'Full Day Excitement at Disneyland® Paris',
+          description: 'Indulge in a full day of excitement at Disneyland® Paris. Choose between Disney® Park (fairy tales across five realms) or Walt Disney Studios® Park (behind-the-scenes movie sets and stunt performances). Overnight stay at the hotel in Paris. (Breakfast, Packed Lunch, Dinner)',
+          activities: ['Disneyland Paris Tickets', 'Theme Park Rides & Shows']
+        },
+        {
+          day: 7,
+          title: 'Onto Brussels: Grand Place, Manneken Pis & Mini Europe',
+          description: 'Travel to Brussels, capital of Belgium. Visit the Grand Place (medieval Town Hall), the famous Manneken Pis statue, and Mini Europe, a miniature park showcasing over 350 European monuments reproduced in fine detail. Overnight stay at the hotel in Netherlands. (Breakfast, Lunch, Dinner)',
+          activities: ['Brussels Orientation', 'Grand Place & Manneken Pis', 'Mini Europe Entrance']
+        },
+        {
+          day: 8,
+          title: 'Keukenhof Gardens (till 10th May) / Dutch Village (from 11th May), Amsterdam Canal Cruise, Drive to Germany',
+          description: 'Visit Keukenhof Gardens (until May 10th) showcasing colorful tulips, daffodils, and hyacinths. From May 11th, visit a traditional Dutch village near Amsterdam with windmills and artisan workshops. Next, embark on a glass-topped Amsterdam Canal Cruise. Later, drive to your hotel in the Frankfurt area. Overnight stay at the hotel in Germany. (Breakfast, Lunch, Dinner)',
+          activities: ['Keukenhof or Dutch Village', 'Amsterdam Canal Cruise', 'Drive to Frankfurt']
+        },
+        {
+          day: 9,
+          title: 'Heidelberg Altstadt, Black Forest Cuckoo Clock Demo, Rhine Falls Boat Ride & Switzerland',
+          description: 'Explore Heidelberg Altstadt (Old Town) and the Church of the Holy Spirit. Next, visit the heart of the Black Forest for a cuckoo clock demonstration. Later, explore the magnificent Rhine Falls with a boat ride. Continue your scenic drive to Switzerland. Overnight stay in Central Switzerland. (Breakfast, Lunch, Dinner)',
+          activities: ['Heidelberg Walking Tour', 'Black Forest Demonstration', 'Rhine Falls Boat Ride']
+        },
+        {
+          day: 10,
+          title: 'Jungfraujoch - Top of Europe & Scenic Interlaken',
+          description: 'Take the Eiger Express 3S-Bahn from Grindelwald Terminal to Eigergletscher, then ride the cogwheel train to Jungfraujoch (highest railway station in Europe at 11,333 feet). Explore the Ice Palace and Sphinx Observatory. Later, explore Interlaken. Overnight stay in Central Switzerland. (Breakfast, Lunch, Dinner)',
+          activities: ['Eiger Express Ride', 'Jungfraujoch Cogwheel Train', 'Sphinx Observatory', 'Interlaken Tour']
+        },
+        {
+          day: 11,
+          title: 'Mt. Titlis Cable Cars & Rotair, Lucerne Orientation, Lindt Home of Chocolate',
+          description: 'Exhilarating trip to the summit of Mt. Titlis (3,020m) by revolving cable car (Rotair) and walk the Titlis Cliff Walk suspension bridge. Later, enjoy a Lucerne orientation tour (Lion Monument, Kapellbrücke). Conclude with a visit to the Lindt Home of Chocolate in Zurich. Overnight stay in Central Switzerland. (Breakfast, Lunch, Dinner)',
+          activities: ['Mt. Titlis Rotair Cable Car', 'Titlis Cliff Walk', 'Lucerne Orientation', 'Lindt Chocolate Museum']
+        },
+        {
+          day: 12,
+          title: 'Vaduz Train Ride (Liechtenstein), Swarovski Crystal Museum & Innsbruck (Austria)',
+          description: 'Scenic drive to Vaduz, capital of Liechtenstein, for a mini train ride. Next, explore Swarovski Crystal Worlds in Wattens. Proceed to Innsbruck to see the Maria Theresien Strasse and Golden Roof. Overnight stay in Innsbruck/Seefeld. (Breakfast, Lunch, Dinner)',
+          activities: ['Vaduz Mini Train', 'Swarovski Crystal Worlds', 'Innsbruck Orientation']
+        },
+        {
+          day: 13,
+          title: 'Venice: Private Boat, St. Mark\'s Square & Gondola Ride',
+          description: 'Travel to Venice. Board a private boat to St. Mark\'s Square. View St. Mark\'s Basilica, Bell Tower, Clock Tower, and the Bridge of Sighs. Experience a classic Venetian Gondola ride through picturesque waterways. Overnight stay in Padova/Ferrara. (Breakfast, Lunch, Dinner)',
+          activities: ['Venice Boat Transfer', 'St. Mark\'s Square Sights', 'Venetian Gondola Ride']
+        },
+        {
+          day: 14,
+          title: 'Guided Florence City Tour & Leaning Tower of Pisa',
+          description: 'Guided tour of Florence with a local guide. View the Duomo, Campanile, Baptistery, and Piazza Della Signoria. Proceed to Pisa to see the Square of Miracles and Leaning Tower of Pisa. Overnight stay in Tuscany region. (Breakfast, Lunch, Dinner)',
+          activities: ['Florence Walking Tour', 'Piazza Della Signoria', 'Pisa Leaning Tower Photo-stop']
+        },
+        {
+          day: 15,
+          title: 'Vatican City, Sistine Chapel, St. Peter\'s Basilica & Rome Sights',
+          description: 'Travel to Rome. Visit Vatican City, the Vatican Museums, the Sistine Chapel (Michelangelo\'s Last Judgement), and St. Peter\'s Basilica. Orientation tour of Rome including Colosseum (exterior), Trevi Fountain, Roman Forum, and Victor Emmanuel Monument. Overnight stay in Rome. (Breakfast, Lunch, Dinner)',
+          activities: ['Vatican Museums & Sistine Chapel', 'St. Peter\'s Basilica Visit', 'Colosseum & Trevi Fountain Sights']
+        },
+        {
+          day: 16,
+          title: 'Departure: Fly Back Home',
+          description: 'Check out from your hotel and transfer to the airport carrying pleasant memories of your European journey. Safe travels! (Breakfast)',
+          activities: ['Hotel Check-out', 'Airport Transfer']
+        }
+      ],
+      inclusions: [
+        'Accommodation in Atrium / Courtyard LHR / Sheraton Skyline London, B&B / Millennium CDG Paris, Amrath / Van der Valk Netherlands, Intercity / Elaya Germany, La Maison / Radisson Central Switzerland, Alpenkoning / Hocheder Innsbruck, Four Points Padova/Ferrara, Park / Le Fonti Tuscany, SHG / Selene Rome',
+        'Eurostar high-speed train tickets from London to Paris',
+        'Daily Continental buffet breakfast, 14 Indian Jain/Vegetarian lunches, 15 Indian Jain/Vegetarian/Non-Vegetarian dinners',
+        'London Eye, Madame Tussauds, Lord\'s Cricket Ground, Tower of London, Thames River Cruise',
+        'Eiffel Tower 3rd level tickets (fallback to 2nd level if closed), Versailles Palace guided tour, Seine Cruise',
+        'Disneyland® Paris entrance (Disney Park or Walt Disney Studios Park), Paris by Night Tour',
+        'Mini Europe in Brussels, Keukenhof entrance (till 10th May), Amsterdam Canal Cruise',
+        'Rhine Falls boat ride, Excursion to Jungfraujoch - Top of Europe, Mt. Titlis revolving Rotair & Cliff Walk',
+        'Lindt Home of Chocolate, Vaduz train ride, Swarovski Crystal Museum, Venice boat & Gondola ride',
+        'Florence guided city tour, Rome orientation tour, Vatican Museums & Sistine Chapel',
+        'Services of our Tour Manager or local representatives'
+      ],
+      exclusions: [
+        'Airfare, Passport, POE, Visa fees, and Travel Insurance',
+        'Personal expenses (laundry, minibar, phone calls, alcohol, porterage)',
+        'Any extra meals or activities not included in the regular menus',
+        'GST, TCS, and other taxes as applicable',
+        'Anything which is not specified in the Itinerary'
+      ],
+      bookingInfo: [
+        'Booking subject to RBI / Government regulations',
+        'No refunds for unutilized services',
+        'Land surcharges applicable on certain departure dates',
+        '50% advance payment required to confirm booking'
+      ],
+      relatedPackages: [
+        {
+          id: 'corporate-trips',
+          title: 'Corporate Retreats',
+          description: 'Team building and corporate events',
+          image: '/images/package-corporate.jpg',
+          price: '15,000',
+          duration: '3 Days'
+        },
+        {
+          id: 'adventure-tours',
+          title: 'Adventure Tours',
+          description: 'Thrilling expeditions for adrenaline seekers',
+          image: '/images/package-adventure.jpg',
+          price: '20,000',
+          duration: '5 Days'
         }
       ]
     }

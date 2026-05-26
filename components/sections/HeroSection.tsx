@@ -1,9 +1,50 @@
+'use client'
+
+import { useState, useMemo } from 'react'
+import { useRouter, useSearchParams } from 'next/navigation'
 import Image from 'next/image'
 import Link from 'next/link'
 import { Button } from '@/components/ui/button'
 import { Star, MapPin } from 'lucide-react'
+import { packages, groupTrips } from '@/constants/data'
 
 export function HeroSection() {
+  const router = useRouter()
+  const searchParams = useSearchParams()
+  const [query, setQuery] = useState(searchParams.get('query') || '')
+  const [isFocused, setIsFocused] = useState(false)
+
+  const searchItems = useMemo(() => {
+    return groupTrips.map(gt => ({ id: gt.id, title: gt.title, locationTag: gt.locationTag }))
+  }, [])
+
+  const suggestions = useMemo(() => {
+    if (!query.trim()) return []
+    const lowerQuery = query.toLowerCase()
+    return searchItems.filter(
+      (item) =>
+        item.title.toLowerCase().includes(lowerQuery) ||
+        (item.locationTag && item.locationTag.toLowerCase().includes(lowerQuery))
+    )
+  }, [query, searchItems])
+
+  const handleSearch = () => {
+    if (suggestions.length > 0) {
+      const selected = suggestions[0]
+      setQuery('')
+      router.push(`/packages/${selected.id}`)
+    } else if (query.trim()) {
+      router.push(`/?query=${encodeURIComponent(query)}#trips`)
+    } else {
+      router.push('/')
+    }
+  }
+
+  const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
+    if (e.key === 'Enter') {
+      handleSearch()
+    }
+  }
   return (
     <section className="relative min-h-[80vh] flex flex-col justify-center pt-10 md:pt-0 pb-12 overflow-hidden">
       {/* Background Image */}
@@ -20,7 +61,7 @@ export function HeroSection() {
         <div className="absolute inset-0 bg-linear-to-t from-black/90 via-transparent to-transparent opacity-80"></div>
       </div>
 
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10 w-full grow flex flex-col justify-center mt-8 md:mt-12">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-20 w-full grow flex flex-col justify-center mt-8 md:mt-12">
         <div className="grid lg:grid-cols-2 gap-12 lg:gap-16 items-center">
 
           {/* Left Column - Clean & Simple Text */}
@@ -45,20 +86,50 @@ export function HeroSection() {
             </p>
 
             {/* Sleek search bar - responsive */}
-            <div className="relative w-full max-w-md bg-white/10 backdrop-blur-xl border border-white/20 rounded-full p-1.5 md:p-2 flex items-center shadow-[0_8px_30px_rgb(0,0,0,0.4)] hover:bg-white/15 transition-all duration-300">
+            <div className="relative z-50 w-full max-w-md bg-white/10 backdrop-blur-xl border border-white/20 rounded-full p-1.5 md:p-2 flex items-center shadow-[0_8px_30px_rgb(0,0,0,0.4)] hover:bg-white/15 transition-all duration-300">
               <div className="pl-3 md:pl-4 pr-1 md:pr-2">
                 <MapPin className="w-4 h-4 md:w-5 md:h-5 text-white/70" />
               </div>
               <input
                 type="text"
                 placeholder="Where to go?"
+                value={query}
+                onChange={(e) => setQuery(e.target.value)}
+                onKeyDown={handleKeyDown}
+                onFocus={() => setIsFocused(true)}
+                onBlur={() => setIsFocused(false)}
                 className="grow bg-transparent border-none outline-none text-white placeholder:text-gray-300 font-medium px-1 md:px-2 text-sm md:text-lg w-full min-w-0"
               />
-              <Link href="#packages">
-                <Button className="rounded-full bg-primary hover:bg-accent text-white px-5 md:px-8 h-10 md:h-12 shadow-lg hover:shadow-primary/50 transition-all font-semibold text-sm md:text-base whitespace-nowrap">
-                  Search
-                </Button>
-              </Link>
+              <Button
+                onClick={handleSearch}
+                className="rounded-full bg-primary hover:bg-accent text-white px-5 md:px-8 h-10 md:h-12 shadow-lg hover:shadow-primary/50 transition-all font-semibold text-sm md:text-base whitespace-nowrap"
+              >
+                Search
+              </Button>
+
+              {/* Suggestions Dropdown */}
+              {query && suggestions.length > 0 && isFocused && (
+                <div className="absolute left-0 right-0 top-full mt-3 bg-[#0a0a0a]/95 backdrop-blur-2xl border border-white/10 rounded-2xl shadow-[0_20px_50px_rgba(0,0,0,0.6)] max-h-60 overflow-y-auto z-5000 divide-y divide-white/5 scrollbar-none">
+                  {suggestions.map(item => (
+                    <div
+                      key={item.id}
+                      onMouseDown={(e) => {
+                        e.preventDefault()
+                        setQuery('')
+                        router.push(`/packages/${item.id}`)
+                      }}
+                      className="p-4 hover:bg-primary/20 cursor-pointer text-white transition-all flex flex-col items-start gap-1"
+                    >
+                      <span className="font-semibold text-sm md:text-base text-white">{item.title}</span>
+                      {item.locationTag && (
+                        <span className="text-[11px] text-gray-400 flex items-center gap-1.5">
+                          <MapPin className="w-3.5 h-3.5 text-primary" /> {item.locationTag}
+                        </span>
+                      )}
+                    </div>
+                  ))}
+                </div>
+              )}
             </div>
           </div>
 
@@ -96,21 +167,21 @@ export function HeroSection() {
                 </div>
               </div>
               <p className="text-gray-300 text-[10px] lg:text-xs leading-relaxed line-clamp-3">
-                "The group trip to Bali exceeded all my expectations. The perfect balance of adventure and relaxation."
+                "The group trip to Europe exceeded all my expectations. The perfect balance of culture, history, and sights."
               </p>
             </div>
 
             {/* Bottom Left Destination Card */}
-            <Link href="/packages/honeymoon-trips">
+            <Link href="/packages/best-of-europe-13-days">
               <div className="absolute bottom-4 lg:bottom-12 -left-4 lg:-left-8 w-60 lg:w-70 bg-white/10 backdrop-blur-md border border-white/10 rounded-3xl p-4 lg:p-5 shadow-2xl z-30 animate-float [animation-delay:2.5s] -rotate-6 hover:rotate-0 hover:z-40 transition-all duration-500 group cursor-pointer hidden md:block">
                 <div className="flex items-center justify-between mb-2 lg:mb-3">
                   <span className="text-[10px] lg:text-xs text-white/70 uppercase tracking-widest font-semibold">Trending</span>
                   <div className="bg-primary/20 text-primary text-[10px] lg:text-xs px-2 py-1 rounded-full font-bold border border-primary/30">Top Rated</div>
                 </div>
-                <h3 className="text-lg lg:text-xl font-bold text-white mb-1 group-hover:text-primary transition-colors">Swiss Alps</h3>
-                <p className="text-xs lg:text-sm text-gray-300 mb-3 lg:mb-4">7 Days • 6 Nights</p>
+                <h3 className="text-lg lg:text-xl font-bold text-white mb-1 group-hover:text-primary transition-colors">Best of Europe</h3>
+                <p className="text-xs lg:text-sm text-gray-300 mb-3 lg:mb-4">13 Days • 12 Nights</p>
                 <div className="flex justify-between items-center pt-2 lg:pt-3 border-t border-white/10">
-                  <span className="text-white font-bold text-base lg:text-lg">$1,299</span>
+                  <span className="text-white font-bold text-base lg:text-lg">₹3,00,000</span>
                   <span className="text-primary text-xs lg:text-sm font-semibold group-hover:translate-x-1 transition-transform">Explore →</span>
                 </div>
               </div>

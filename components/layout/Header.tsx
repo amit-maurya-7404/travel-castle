@@ -80,12 +80,12 @@ export function Header() {
             </Link>
           </div>
 
-          {/* Right: Contact Us Button & Mobile Toggle */}
+          {/* Right: Chat with Us Button & Mobile Toggle */}
           <div className="flex-1 flex items-center justify-end z-50">
             <div className="hidden md:block">
-              <Link href="/contact-us">
-                <Button className="bg-primary hover:bg-accent text-white shadow-glow-primary hover-lift">Contact Us</Button>
-              </Link>
+              <a href="https://wa.me/919809660999" target="_blank" rel="noopener noreferrer">
+                <Button className="bg-primary hover:bg-accent text-white shadow-glow-primary hover-lift">Chat with Us</Button>
+              </a>
             </div>
 
             {/* Mobile Menu Toggle Button */}
@@ -142,11 +142,11 @@ export function Header() {
         </div>
 
         <div className={`p-6 mt-auto transform transition-all duration-500 delay-500 ${isMobileMenuOpen ? 'translate-y-0 opacity-100' : 'translate-y-8 opacity-0'}`}>
-          <Link href="/contact-us" className="block" onClick={() => setIsMobileMenuOpen(false)}>
+          <a href="https://wa.me/919809660999" target="_blank" rel="noopener noreferrer" className="block" onClick={() => setIsMobileMenuOpen(false)}>
             <Button className="w-full h-14 text-lg bg-primary hover:bg-accent text-white shadow-glow-primary rounded-xl">
-              Contact Us
+              Chat with Us
             </Button>
-          </Link>
+          </a>
           <p className="text-center text-sm text-muted-foreground mt-6">
             © 2024 Travel Castle. All rights reserved.
           </p>

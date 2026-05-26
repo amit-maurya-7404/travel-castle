@@ -16,14 +16,29 @@ import {
 import { useState, useEffect } from 'react'
 
 const galleryImages = [
-  '/images/hero-destination.jpg',
-  '/images/package-adventure.jpg',
-  '/images/package-honeymoon.jpg',
-  '/images/blog-1.jpg',
-  '/images/blog-2.jpg',
-  '/images/blog-3.jpg',
-  '/images/package-solo.jpg',
-  '/images/hero-destination.jpg',
+  '/images/gallery/inbound_img1.jpeg',
+  '/images/gallery/inbound_img2.jpeg',
+  '/images/gallery/inbound_img3.jpeg',
+  '/images/gallery/inbound_img4.jpeg',
+  '/images/gallery/inbound_img5.jpeg',
+  '/images/gallery/inbound_img6.jpeg',
+  '/images/gallery/inbound_img7.jpeg',
+  '/images/gallery/inbound_img8.jpeg',
+  '/images/gallery/inbound_img9.jpeg',
+  '/images/gallery/inbound_img10.jpeg',
+  '/images/gallery/inbound_img11.jpeg',
+  '/images/gallery/inbound_img12.jpeg',
+  '/images/gallery/inbound_img13.jpeg',
+  '/images/gallery/inbound_img14.jpeg',
+  '/images/gallery/inbound_img15.jpeg',
+  '/images/gallery/inbound_img16.jpeg',
+  '/images/gallery/inbound_img17.jpeg',
+  '/images/gallery/inbound_img18.jpeg',
+  '/images/gallery/inbound_img19.jpeg',
+  '/images/gallery/inbound_img20.jpeg',
+  '/images/gallery/inbound_img21.jpeg',
+  '/images/gallery/inbound_img22.jpeg',
+  '/images/gallery/inbound_img23.jpeg',
 ]
 
 export function GallerySection() {
