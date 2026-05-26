@@ -10,11 +10,12 @@ import { NextRequest, NextResponse } from 'next/server'
 
 export async function GET(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  context: { params: Promise<{ id: string }> }
 ) {
   try {
+    const { id } = await context.params
     if (useMockData) {
-      const review = getReviewById(params.id)
+      const review = getReviewById(id)
       if (!review) {
         return NextResponse.json({ error: 'Review not found' }, { status: 404 })
       }
@@ -23,7 +24,7 @@ export async function GET(
 
     await connectDB()
 
-    const review = await Review.findById(params.id)
+    const review = await Review.findById(id)
     if (!review) {
       return NextResponse.json(
         { error: 'Review not found' },
@@ -43,13 +44,14 @@ export async function GET(
 
 export async function PUT(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  context: { params: Promise<{ id: string }> }
 ) {
   try {
+    const { id } = await context.params
     const data = await request.json()
 
     if (useMockData) {
-      const review = updateReview(params.id, data)
+      const review = updateReview(id, data)
       if (!review) {
         return NextResponse.json({ error: 'Review not found' }, { status: 404 })
       }
@@ -59,7 +61,7 @@ export async function PUT(
     await connectDB()
 
     const review = await Review.findByIdAndUpdate(
-      params.id,
+      id,
       {
         author: data.author,
         rating: data.rating,
@@ -91,11 +93,12 @@ export async function PUT(
 
 export async function DELETE(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  context: { params: Promise<{ id: string }> }
 ) {
   try {
+    const { id } = await context.params
     if (useMockData) {
-      const deleted = deleteReview(params.id)
+      const deleted = deleteReview(id)
       if (!deleted) {
         return NextResponse.json({ error: 'Review not found' }, { status: 404 })
       }
@@ -104,7 +107,7 @@ export async function DELETE(
 
     await connectDB()
 
-    const review = await Review.findByIdAndDelete(params.id)
+    const review = await Review.findByIdAndDelete(id)
 
     if (!review) {
       return NextResponse.json(

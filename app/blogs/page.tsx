@@ -20,42 +20,6 @@ export default function Blogs() {
 
   return (
     <div className="min-h-screen bg-background">
-      {/* Header */}
-      <header className="border-b border-border/50 bg-background/80 backdrop-blur-md sticky top-0 z-50 animate-fade-in glass shadow-sm">
-        <nav className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-3 flex items-center justify-between">
-          <div className="flex items-center gap-3 group hover-lift">
-            <a href="/">
-              <Image
-                src="/logo.png"
-                alt="Travel Castle"
-                width={50}
-                height={50}
-                className="h-12 w-auto transition-transform duration-300 group-hover:scale-105"
-              />
-            </a>
-          </div>
-          <div className="hidden md:flex items-center gap-8">
-            <a href="/domestic-trips" className="text-foreground hover:text-primary transition relative group">
-              Domestic Trips
-              <span className="absolute bottom-0 left-0 w-0 h-0.5 bg-primary group-hover:w-full transition-all duration-300"></span>
-            </a>
-            <a href="/international-trips" className="text-foreground hover:text-primary transition relative group">
-              International Trips
-              <span className="absolute bottom-0 left-0 w-0 h-0.5 bg-primary group-hover:w-full transition-all duration-300"></span>
-            </a>
-            <a href="/blogs" className="text-primary font-semibold transition relative group">
-              Blogs
-              <span className="absolute bottom-0 left-0 w-full h-0.5 bg-primary"></span>
-            </a>
-            <a href="/about-us" className="text-foreground hover:text-primary transition relative group">
-              About Us
-              <span className="absolute bottom-0 left-0 w-0 h-0.5 bg-primary group-hover:w-full transition-all duration-300"></span>
-            </a>
-            <Button className="bg-primary hover:bg-accent text-white shadow-glow-primary hover-lift">Contact Us</Button>
-          </div>
-        </nav>
-      </header>
-
       {/* Hero Section */}
       <section className="relative bg-gradient-to-b from-primary/10 to-background py-12 overflow-hidden">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">

@@ -181,42 +181,6 @@ export default function TripDetailPage({ params }: { params: { id: string } }) {
 
   return (
     <div className="min-h-screen bg-background">
-      {/* Header */}
-      <header className="border-b border-border/50 bg-background/80 backdrop-blur-md sticky top-0 z-50 animate-fade-in glass shadow-sm">
-        <nav className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-3 flex items-center justify-between">
-          <div className="flex items-center gap-3 group hover-lift">
-            <Link href="/">
-              <Image
-                src="/logo.png"
-                alt="Travel Castle"
-                width={50}
-                height={50}
-                className="h-12 w-auto transition-transform duration-300 group-hover:scale-105"
-              />
-            </Link>
-          </div>
-          <div className="hidden md:flex items-center gap-8">
-            <Link href="/domestic-trips" className="text-foreground hover:text-primary transition relative group">
-              Domestic Trips
-              <span className="absolute bottom-0 left-0 w-0 h-0.5 bg-primary group-hover:w-full transition-all duration-300"></span>
-            </Link>
-            <Link href="/international-trips" className="text-foreground hover:text-primary transition relative group">
-              International Trips
-              <span className="absolute bottom-0 left-0 w-0 h-0.5 bg-primary group-hover:w-full transition-all duration-300"></span>
-            </Link>
-            <Link href="/blogs" className="text-foreground hover:text-primary transition relative group">
-              Blogs
-              <span className="absolute bottom-0 left-0 w-0 h-0.5 bg-primary group-hover:w-full transition-all duration-300"></span>
-            </Link>
-            <Link href="/about-us" className="text-foreground hover:text-primary transition relative group">
-              About Us
-              <span className="absolute bottom-0 left-0 w-0 h-0.5 bg-primary group-hover:w-full transition-all duration-300"></span>
-            </Link>
-            <Button className="bg-primary hover:bg-accent text-white shadow-glow-primary hover-lift">Contact Us</Button>
-          </div>
-        </nav>
-      </header>
-
       {/* Back Button */}
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
         <Link href="/domestic-trips" className="inline-flex items-center gap-2 text-muted-foreground hover:text-primary transition">
@@ -234,7 +198,7 @@ export default function TripDetailPage({ params }: { params: { id: string } }) {
           className="object-cover"
           priority
         />
-        <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-black/30 to-transparent"></div>
+        <div className="absolute inset-0 bg-linear-to-t from-black/60 via-black/30 to-transparent"></div>
         <div className="absolute bottom-0 left-0 right-0 p-8">
           <div className="max-w-7xl mx-auto">
             <div className="flex items-center gap-2 mb-4">
@@ -318,7 +282,7 @@ export default function TripDetailPage({ params }: { params: { id: string } }) {
                 <div className="grid md:grid-cols-2 gap-3">
                   {trip.highlights.map((highlight, idx) => (
                     <div key={idx} className="flex items-center gap-3">
-                      <CheckCircle className="w-5 h-5 text-green-500 flex-shrink-0" />
+                      <CheckCircle className="w-5 h-5 text-green-500 shrink-0" />
                       <span>{highlight}</span>
                     </div>
                   ))}
@@ -418,7 +382,7 @@ export default function TripDetailPage({ params }: { params: { id: string } }) {
                   <ul className="space-y-3">
                     {trip.inclusions.map((item, idx) => (
                       <li key={idx} className="flex items-start gap-3">
-                        <CheckCircle className="w-5 h-5 text-green-500 flex-shrink-0 mt-0.5" />
+                        <CheckCircle className="w-5 h-5 text-green-500 shrink-0 mt-0.5" />
                         <span className="text-muted-foreground">{item}</span>
                       </li>
                     ))}
@@ -430,7 +394,7 @@ export default function TripDetailPage({ params }: { params: { id: string } }) {
                   <ul className="space-y-3">
                     {trip.exclusions.map((item, idx) => (
                       <li key={idx} className="flex items-start gap-3">
-                        <XCircle className="w-5 h-5 text-red-500 flex-shrink-0 mt-0.5" />
+                        <XCircle className="w-5 h-5 text-red-500 shrink-0 mt-0.5" />
                         <span className="text-muted-foreground">{item}</span>
                       </li>
                     ))}
@@ -485,13 +449,18 @@ export default function TripDetailPage({ params }: { params: { id: string } }) {
                   <div>
                     <h3 className="font-semibold mb-4">Contact Us</h3>
                     <div className="space-y-3">
-                      <div className="flex items-center gap-3">
-                        <Phone className="w-5 h-5 text-primary" />
-                        <span>+91 98765 43210</span>
+                      <div className="flex items-start gap-3">
+                        <Phone className="w-5 h-5 text-primary mt-1 shrink-0" />
+                        <span className="flex flex-col gap-1">
+                          <a href="tel:+919809660999" className="hover:text-primary transition">+91-9809660999</a>
+                          <a href="tel:+919820702727" className="hover:text-primary transition">+91-9820702727</a>
+                        </span>
                       </div>
                       <div className="flex items-center gap-3">
-                        <Mail className="w-5 h-5 text-primary" />
-                        <span>bookings@travelcastle.com</span>
+                        <Mail className="w-5 h-5 text-primary shrink-0" />
+                        <span>
+                          <a href="mailto:bookings@travelcastle.in" className="hover:text-primary transition">bookings@travelcastle.in</a>
+                        </span>
                       </div>
                     </div>
 

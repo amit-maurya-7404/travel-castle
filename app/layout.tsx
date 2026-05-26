@@ -40,10 +40,10 @@ export default function RootLayout({
     <html lang="en" className="bg-background">
       <body className="font-sans antialiased bg-background text-foreground flex flex-col min-h-screen">
         <Header />
-        <main className="flex-grow">
+        <main className="grow pt-20">
           {children}
         </main>
-        {/* <Footer /> .*/}
+        <Footer />
         {process.env.NODE_ENV === 'production' && <Analytics />}
       </body>
     </html>

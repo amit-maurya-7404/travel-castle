@@ -11,11 +11,12 @@ import { Types } from 'mongoose'
 
 export async function GET(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  context: { params: Promise<{ id: string }> }
 ) {
   try {
+    const { id } = await context.params
     if (useMockData) {
-      const pkg = getPackageById(params.id)
+      const pkg = getPackageById(id)
       if (!pkg) {
         return NextResponse.json({ error: 'Package not found' }, { status: 404 })
       }
@@ -24,7 +25,7 @@ export async function GET(
 
     await connectDB()
 
-    const pkg = await Package.findById(params.id)
+    const pkg = await Package.findById(id)
     if (!pkg) {
       return NextResponse.json(
         { error: 'Package not found' },
@@ -44,13 +45,14 @@ export async function GET(
 
 export async function PUT(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  context: { params: Promise<{ id: string }> }
 ) {
   try {
+    const { id } = await context.params
     const data = await request.json()
 
     if (useMockData) {
-      const pkg = updatePackage(params.id, data)
+      const pkg = updatePackage(id, data)
       if (!pkg) {
         return NextResponse.json({ error: 'Package not found' }, { status: 404 })
       }
@@ -60,7 +62,7 @@ export async function PUT(
     await connectDB()
 
     const pkg = await Package.findByIdAndUpdate(
-      params.id,
+      id,
       {
         title: data.title,
         description: data.description,
@@ -95,11 +97,12 @@ export async function PUT(
 
 export async function DELETE(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  context: { params: Promise<{ id: string }> }
 ) {
   try {
+    const { id } = await context.params
     if (useMockData) {
-      const deleted = deletePackage(params.id)
+      const deleted = deletePackage(id)
       if (!deleted) {
         return NextResponse.json({ error: 'Package not found' }, { status: 404 })
       }
@@ -108,7 +111,7 @@ export async function DELETE(
 
     await connectDB()
 
-    const pkg = await Package.findByIdAndDelete(params.id)
+    const pkg = await Package.findByIdAndDelete(id)
 
     if (!pkg) {
       return NextResponse.json(

@@ -10,11 +10,12 @@ import { NextRequest, NextResponse } from 'next/server'
 
 export async function GET(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  context: { params: Promise<{ id: string }> }
 ) {
   try {
+    const { id } = await context.params
     if (useMockData) {
-      const image = getGalleryById(params.id)
+      const image = getGalleryById(id)
       if (!image) {
         return NextResponse.json({ error: 'Image not found' }, { status: 404 })
       }
@@ -23,7 +24,7 @@ export async function GET(
 
     await connectDB()
 
-    const image = await Gallery.findById(params.id)
+    const image = await Gallery.findById(id)
     if (!image) {
       return NextResponse.json(
         { error: 'Image not found' },
@@ -43,13 +44,14 @@ export async function GET(
 
 export async function PUT(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  context: { params: Promise<{ id: string }> }
 ) {
   try {
+    const { id } = await context.params
     const data = await request.json()
 
     if (useMockData) {
-      const image = updateGalleryItem(params.id, data)
+      const image = updateGalleryItem(id, data)
       if (!image) {
         return NextResponse.json({ error: 'Image not found' }, { status: 404 })
       }
@@ -59,7 +61,7 @@ export async function PUT(
     await connectDB()
 
     const image = await Gallery.findByIdAndUpdate(
-      params.id,
+      id,
       {
         title: data.title,
         image: data.image,
@@ -88,11 +90,12 @@ export async function PUT(
 
 export async function DELETE(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  context: { params: Promise<{ id: string }> }
 ) {
   try {
+    const { id } = await context.params
     if (useMockData) {
-      const deleted = deleteGalleryItem(params.id)
+      const deleted = deleteGalleryItem(id)
       if (!deleted) {
         return NextResponse.json({ error: 'Image not found' }, { status: 404 })
       }
@@ -101,7 +104,7 @@ export async function DELETE(
 
     await connectDB()
 
-    const image = await Gallery.findByIdAndDelete(params.id)
+    const image = await Gallery.findByIdAndDelete(id)
 
     if (!image) {
       return NextResponse.json(

@@ -5,7 +5,7 @@ import { Star, MapPin } from 'lucide-react'
 
 export function HeroSection() {
   return (
-    <section className="relative min-h-[90vh] flex flex-col justify-center pt-24 md:pt-14 pb-12 overflow-hidden">
+    <section className="relative min-h-[80vh] flex flex-col justify-center pt-10 md:pt-0 pb-12 overflow-hidden">
       {/* Background Image */}
       <div className="absolute inset-0 z-0">
         <Image
@@ -16,11 +16,11 @@ export function HeroSection() {
           priority
         />
         {/* Smooth, sophisticated gradient overlay */}
-        <div className="absolute inset-0 bg-gradient-to-r from-black/95 via-black/80 lg:via-black/70 to-transparent"></div>
-        <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-transparent to-transparent opacity-80"></div>
+        <div className="absolute inset-0 bg-linear-to-r from-black/95 via-black/80 lg:via-black/70 to-transparent"></div>
+        <div className="absolute inset-0 bg-linear-to-t from-black/90 via-transparent to-transparent opacity-80"></div>
       </div>
 
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10 w-full flex-grow flex flex-col justify-center mt-8 md:mt-12">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10 w-full grow flex flex-col justify-center mt-8 md:mt-12">
         <div className="grid lg:grid-cols-2 gap-12 lg:gap-16 items-center">
 
           {/* Left Column - Clean & Simple Text */}
@@ -52,7 +52,7 @@ export function HeroSection() {
               <input
                 type="text"
                 placeholder="Where to go?"
-                className="flex-grow bg-transparent border-none outline-none text-white placeholder:text-gray-300 font-medium px-1 md:px-2 text-sm md:text-lg w-full min-w-0"
+                className="grow bg-transparent border-none outline-none text-white placeholder:text-gray-300 font-medium px-1 md:px-2 text-sm md:text-lg w-full min-w-0"
               />
               <Link href="#packages">
                 <Button className="rounded-full bg-primary hover:bg-accent text-white px-5 md:px-8 h-10 md:h-12 shadow-lg hover:shadow-primary/50 transition-all font-semibold text-sm md:text-base whitespace-nowrap">
@@ -63,9 +63,9 @@ export function HeroSection() {
           </div>
 
           {/* Right Column - Elegant Floating Cards (Hidden on small mobile, visible on sm and up but scaled) */}
-          <div className="relative h-[300px] sm:h-[400px] lg:h-[500px] hidden sm:block">
+          <div className="relative h-75 sm:h-100 lg:h-125 hidden sm:block">
             {/* Main Center Review Card */}
-            <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-[280px] lg:w-[340px] bg-black/40 backdrop-blur-2xl border border-white/10 rounded-3xl p-5 lg:p-6 shadow-[0_20px_50px_rgba(0,0,0,0.5)] z-20 animate-float">
+            <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-70 lg:w-85 bg-black/40 backdrop-blur-2xl border border-white/10 rounded-3xl p-5 lg:p-6 shadow-[0_20px_50px_rgba(0,0,0,0.5)] z-20 animate-float">
               <div className="flex gap-3 lg:gap-4 items-center mb-3 lg:mb-4">
                 <div className="w-10 h-10 lg:w-14 lg:h-14 rounded-full overflow-hidden relative border-2 border-primary/50 shadow-glow-primary">
                   <Image src="/images/avatar-1.jpg" alt="Traveler" fill className="object-cover" />
@@ -83,7 +83,7 @@ export function HeroSection() {
             </div>
 
             {/* Top Right Review Card */}
-            <div className="absolute top-0 lg:top-8 right-0 lg:-right-8 w-[240px] lg:w-[280px] bg-white/10 backdrop-blur-md border border-white/10 rounded-3xl p-4 lg:p-5 shadow-2xl z-10 animate-float [animation-delay:1.5s] opacity-70 rotate-6 hover:rotate-0 hover:opacity-100 hover:z-30 transition-all duration-500 cursor-default hidden md:block">
+            <div className="absolute top-0 lg:top-8 right-0 lg:-right-8 w-60 lg:w-70 bg-white/10 backdrop-blur-md border border-white/10 rounded-3xl p-4 lg:p-5 shadow-2xl z-10 animate-float [animation-delay:1.5s] opacity-70 rotate-6 hover:rotate-0 hover:opacity-100 hover:z-30 transition-all duration-500 cursor-default hidden md:block">
               <div className="flex gap-2 lg:gap-3 items-center mb-2 lg:mb-3">
                 <div className="w-8 h-8 lg:w-10 lg:h-10 rounded-full bg-accent/80 flex items-center justify-center text-white font-bold border border-white/20 text-sm">
                   M
@@ -102,7 +102,7 @@ export function HeroSection() {
 
             {/* Bottom Left Destination Card */}
             <Link href="/packages/honeymoon-trips">
-              <div className="absolute bottom-4 lg:bottom-12 -left-4 lg:-left-8 w-[240px] lg:w-[280px] bg-white/10 backdrop-blur-md border border-white/10 rounded-3xl p-4 lg:p-5 shadow-2xl z-30 animate-float [animation-delay:2.5s] -rotate-6 hover:rotate-0 hover:z-40 transition-all duration-500 group cursor-pointer hidden md:block">
+              <div className="absolute bottom-4 lg:bottom-12 -left-4 lg:-left-8 w-60 lg:w-70 bg-white/10 backdrop-blur-md border border-white/10 rounded-3xl p-4 lg:p-5 shadow-2xl z-30 animate-float [animation-delay:2.5s] -rotate-6 hover:rotate-0 hover:z-40 transition-all duration-500 group cursor-pointer hidden md:block">
                 <div className="flex items-center justify-between mb-2 lg:mb-3">
                   <span className="text-[10px] lg:text-xs text-white/70 uppercase tracking-widest font-semibold">Trending</span>
                   <div className="bg-primary/20 text-primary text-[10px] lg:text-xs px-2 py-1 rounded-full font-bold border border-primary/30">Top Rated</div>
@@ -121,7 +121,7 @@ export function HeroSection() {
       </div>
 
       {/* Elegant, Simple Stats Footer - Responsive Grid */}
-      <div className="relative z-10 w-full mt-2 lg:mt-auto bg-gradient-to-t from-black/80 to-transparent pt-8 lg:pt-12 pb-6">
+      <div className="relative z-10 w-full mt-2 lg:mt-auto bg-linear-to-t from-black/80 to-transparent pt-8 lg:pt-12 pb-6">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 border-t border-white/10 pt-6 lg:pt-8">
           <div className="grid grid-cols-2 lg:flex lg:flex-wrap lg:justify-between items-center gap-y-8 gap-x-4 lg:gap-0">
 

@@ -51,7 +51,7 @@ export function Header() {
                 alt="Travel Castle"
                 width={50}
                 height={50}
-                className="w-auto h-16 md:h-20"
+                className="w-auto h-20 md:h-20"
               />
             </Link>
           </div>
@@ -72,6 +72,10 @@ export function Header() {
             </Link>
             <Link href="/about-us" className="transition relative group font-medium text-foreground hover:text-primary whitespace-nowrap">
               About Us
+              <span className="absolute bottom-0 left-0 w-0 h-0.5 bg-primary group-hover:w-full transition-all duration-300"></span>
+            </Link>
+            <Link href="/contact-us" className="transition relative group font-medium text-foreground hover:text-primary whitespace-nowrap">
+              Contact Us
               <span className="absolute bottom-0 left-0 w-0 h-0.5 bg-primary group-hover:w-full transition-all duration-300"></span>
             </Link>
           </div>

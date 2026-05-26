@@ -10,11 +10,12 @@ import { NextRequest, NextResponse } from 'next/server'
 
 export async function GET(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  context: { params: Promise<{ id: string }> }
 ) {
   try {
+    const { id } = await context.params
     if (useMockData) {
-      const blog = getBlogById(params.id)
+      const blog = getBlogById(id)
       if (!blog) {
         return NextResponse.json({ error: 'Blog not found' }, { status: 404 })
       }
@@ -23,7 +24,7 @@ export async function GET(
 
     await connectDB()
 
-    const blog = await Blog.findById(params.id)
+    const blog = await Blog.findById(id)
     if (!blog) {
       return NextResponse.json(
         { error: 'Blog not found' },
@@ -43,13 +44,14 @@ export async function GET(
 
 export async function PUT(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  context: { params: Promise<{ id: string }> }
 ) {
   try {
+    const { id } = await context.params
     const data = await request.json()
 
     if (useMockData) {
-      const blog = updateBlog(params.id, data)
+      const blog = updateBlog(id, data)
       if (!blog) {
         return NextResponse.json({ error: 'Blog not found' }, { status: 404 })
       }
@@ -59,7 +61,7 @@ export async function PUT(
     await connectDB()
 
     const blog = await Blog.findByIdAndUpdate(
-      params.id,
+      id,
       {
         title: data.title,
         description: data.description,
@@ -90,11 +92,12 @@ export async function PUT(
 
 export async function DELETE(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  context: { params: Promise<{ id: string }> }
 ) {
   try {
+    const { id } = await context.params
     if (useMockData) {
-      const deleted = deleteBlog(params.id)
+      const deleted = deleteBlog(id)
       if (!deleted) {
         return NextResponse.json({ error: 'Blog not found' }, { status: 404 })
       }
@@ -103,7 +106,7 @@ export async function DELETE(
 
     await connectDB()
 
-    const blog = await Blog.findByIdAndDelete(params.id)
+    const blog = await Blog.findByIdAndDelete(id)
 
     if (!blog) {
       return NextResponse.json(

@@ -1,376 +1,1019 @@
 'use client'
 
-import { useState, use } from 'react'
+import { useState, useMemo, useEffect, useRef } from 'react'
+import { useParams, useRouter } from 'next/navigation'
+import { notFound } from 'next/navigation'
 import Image from 'next/image'
 import Link from 'next/link'
 import { Button } from '@/components/ui/button'
-import { Card } from '@/components/ui/card'
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import { Badge } from '@/components/ui/badge'
-import { Separator } from '@/components/ui/separator'
+import { Card } from '@/components/ui/card'
+import { Input } from '@/components/ui/input'
+import {
+  Accordion,
+  AccordionContent,
+  AccordionItem,
+  AccordionTrigger
+} from '@/components/ui/accordion'
+import { TripHeroCarousel } from '@/components/sections/trip-hero-carousel'
+import { GallerySection } from '@/components/sections/GallerySection'
+import { BookingDialog } from '@/components/booking-dialog'
+import { Calendar } from '@/components/ui/calendar'
 import {
   MapPin,
+  Calendar as CalendarIcon,
   Users,
-  Calendar,
-  Clock,
   Star,
+  Phone,
+  MessageCircle,
+  ChevronDown,
+  Download,
   CheckCircle,
   XCircle,
-  Phone,
-  Mail,
-  ArrowLeft,
   Sparkles,
-  Download,
-  Share2,
-  Camera,
   Luggage,
-  Navigation,
-  MessageCircle,
-  Shield
+  Shield,
+  Info
 } from 'lucide-react'
 
-export default function PackageDetail({ params }: { params: Promise<{ id: string }> }) {
-  const { id } = use(params)
+// Contact Constants
+const contactEmail = 'info@travelcastle.in'
+const contactPhone = '+919809660999'
+const contactPhoneDisplay = '+91-9809660999 / +91-9820702727'
+const instagramUrl = 'https://instagram.com/travelcastle'
+
+type SelectionItem = {
+  name: string
+  price: number
+}
+
+interface RequestCallbackDialogProps {
+  open: boolean
+  onOpenChange: (open: boolean) => void
+  title: string
+  price: number
+  selectedDate?: Date
+}
+
+// Local Dialog Modal Component for Callback Requests
+function RequestCallbackDialog({ open, onOpenChange, title, price, selectedDate }: RequestCallbackDialogProps) {
+  const [formData, setFormData] = useState({ name: '', phone: '', email: '', date: '' })
+  const [submitted, setSubmitted] = useState(false)
+  const [loading, setLoading] = useState(false)
+
+  useEffect(() => {
+    if (open) {
+      setFormData(prev => ({
+        ...prev,
+        date: selectedDate ? selectedDate.toISOString().split('T')[0] : ''
+      }))
+    }
+  }, [open, selectedDate])
+
+  const handleSubmit = (e: React.FormEvent) => {
+    e.preventDefault()
+    if (!formData.name || !formData.phone) return
+    setLoading(true)
+    setTimeout(() => {
+      setLoading(false)
+      setSubmitted(true)
+    }, 1000)
+  }
+
+  if (!open) return null
+
+  return (
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-xs p-4 animate-fade-in">
+      <div className="bg-white rounded-3xl p-6 md:p-8 max-w-md w-full shadow-2xl relative border border-slate-100 animate-scale-in">
+        <button
+          onClick={() => { onOpenChange(false); setSubmitted(false); }}
+          className="absolute top-4 right-4 text-slate-400 hover:text-slate-600 transition-colors"
+        >
+          ✕
+        </button>
+
+        {submitted ? (
+          <div className="text-center py-6">
+            <div className="w-16 h-16 rounded-full bg-emerald-50 text-emerald-500 flex items-center justify-center mx-auto mb-4 border border-emerald-100">
+              ✓
+            </div>
+            <h3 className="text-xl font-bold text-slate-800">Request Sent!</h3>
+            <p className="text-sm text-slate-500 mt-2">
+              Our travel consultant will call you back on <strong>{formData.phone}</strong> within 15 minutes to help plan your <strong>{title}</strong> journey{formData.date ? ` starting on ${new Date(formData.date).toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' })}` : ''}.
+            </p>
+            <Button
+              className="mt-6 w-full"
+              onClick={() => { onOpenChange(false); setSubmitted(false); }}
+            >
+              Close
+            </Button>
+          </div>
+        ) : (
+          <form onSubmit={handleSubmit} className="space-y-4">
+            <div>
+              <h3 className="text-lg font-bold text-slate-800 font-sans">Plan Your Journey</h3>
+              <p className="text-xs text-slate-500 mt-0.5">Customized callback for {title}</p>
+            </div>
+
+            <div className="space-y-1">
+              <label className="text-xs font-bold text-slate-500 uppercase tracking-wide">Your Name *</label>
+              <Input
+                required
+                type="text"
+                placeholder="Enter your full name"
+                value={formData.name}
+                onChange={(e) => setFormData({ ...formData, name: e.target.value })}
+                className="bg-white border-slate-200 focus-visible:ring-primary h-11 rounded-xl"
+              />
+            </div>
+
+            <div className="space-y-1">
+              <label className="text-xs font-bold text-slate-500 uppercase tracking-wide">Phone Number *</label>
+              <Input
+                required
+                type="tel"
+                placeholder="e.g. +91 98096 60999"
+                value={formData.phone}
+                onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
+                className="bg-white border-slate-200 focus-visible:ring-primary h-11 rounded-xl"
+              />
+            </div>
+
+            <div className="space-y-1">
+              <label className="text-xs font-bold text-slate-500 uppercase tracking-wide">Preferred Travel Date</label>
+              <Input
+                type="date"
+                min={new Date().toISOString().split('T')[0]}
+                value={formData.date}
+                onChange={(e) => setFormData({ ...formData, date: e.target.value })}
+                className="bg-white border-slate-200 focus-visible:ring-primary h-11 rounded-xl"
+              />
+            </div>
+
+            <div className="space-y-1">
+              <label className="text-xs font-bold text-slate-500 uppercase tracking-wide">Email Address</label>
+              <Input
+                type="email"
+                placeholder="name@example.com"
+                value={formData.email}
+                onChange={(e) => setFormData({ ...formData, email: e.target.value })}
+                className="bg-white border-slate-200 focus-visible:ring-primary h-11 rounded-xl"
+              />
+            </div>
+
+            <div className="pt-2">
+              <Button
+                type="submit"
+                disabled={loading}
+                className="w-full h-12 bg-primary text-white hover:bg-primary/90 font-bold rounded-xl"
+              >
+                {loading ? 'Sending...' : 'Request callback'}
+              </Button>
+            </div>
+          </form>
+        )}
+      </div>
+    </div>
+  )
+}
+
+
+export default function PackageDetail() {
+  const [selections, setSelections] = useState<SelectionItem[]>([])
+  const [selectedDate, setSelectedDate] = useState<Date | undefined>(undefined)
+  const [showFullDesc, setShowFullDesc] = useState(false)
+  const [callbackOpen, setCallbackOpen] = useState(false)
+  const [bookingOpen, setBookingOpen] = useState(false)
+  const [expandedDays, setExpandedDays] = useState<number[]>([])
   const [activeTab, setActiveTab] = useState('overview')
+  const [isClient, setIsClient] = useState(false)
+
+  const tabContainerRef = useRef<HTMLDivElement>(null)
+  const activeTabRef = useRef(activeTab)
+
+  const params = useParams()
+  const router = useRouter()
+  const id = params?.id as string
 
   // Package details based on ID
   const packageDetails = getPackageDetails(id)
 
+  useEffect(() => {
+    activeTabRef.current = activeTab
+  }, [activeTab])
+
+  // Setup client verification
+  useEffect(() => {
+    setIsClient(true)
+    if (typeof window === 'undefined') return
+
+    const sections = [
+      'overview',
+      'itinerary',
+      'batches',
+      'costing',
+      'note',
+      'stays',
+      'inclusions',
+      'exclusions',
+      'payment',
+      'cancellation',
+      'things-to-carry',
+      'travel-essentials',
+    ]
+
+    const observer = new IntersectionObserver(
+      (entries) => {
+        let maxRatio = 0
+        let activeSection = activeTabRef.current
+
+        entries.forEach(entry => {
+          if (entry.isIntersecting && entry.intersectionRatio > maxRatio) {
+            maxRatio = entry.intersectionRatio
+            activeSection = entry.target.id
+          }
+        })
+
+        if (activeSection !== activeTabRef.current) {
+          setActiveTab(activeSection)
+          scrollActiveTabIntoView(activeSection)
+        }
+      },
+      {
+        rootMargin: '-50% 0px -50% 0px',
+        threshold: [0, 0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 1.0],
+      }
+    )
+
+    sections.forEach(id => {
+      const el = document.getElementById(id)
+      if (el) observer.observe(el)
+    })
+
+    return () => observer.disconnect()
+  }, [])
+
   if (!packageDetails) {
-    return (
-      <div className="min-h-screen bg-background flex items-center justify-center">
-        <div className="text-center">
-          <h1 className="text-4xl font-bold text-foreground mb-4">Package Not Found</h1>
-          <p className="text-muted-foreground mb-8">The package you're looking for doesn't exist.</p>
-          <Link href="/">
-            <Button className="bg-primary hover:bg-accent text-white">
-              Back to Home
-            </Button>
-          </Link>
-        </div>
-      </div>
+    return notFound()
+  }
+
+  // Selections & Pricing Calculations
+  const lowestPrice = useMemo(() => {
+    const rawPrice = parseInt(packageDetails.price.replace(/,/g, ''), 10) || 0
+    return rawPrice
+  }, [packageDetails])
+
+  const total = useMemo(() => {
+    return selections.reduce((sum, item) => sum + item.price, 0)
+  }, [selections])
+
+  // Options Calculations
+  const currentOptionName = useMemo(() => {
+    return selections.length > 0 ? selections[0].name : 'Triple Sharing (Standard)'
+  }, [selections])
+
+  const currentTotalPrice = useMemo(() => {
+    return selections.length > 0 ? total : lowestPrice
+  }, [selections, total, lowestPrice])
+
+  // Local configurations mapping the reference structure
+  const difficulty: string = 'Moderate'
+  const groupSize = packageDetails.groupSize || '2-12 People'
+  const rating = 4.9
+
+  const heroMedia = useMemo(() => {
+    return [
+      { type: 'image' as const, src: packageDetails.heroImage, alt: packageDetails.title }
+    ]
+  }, [packageDetails])
+
+  const batchDates = useMemo(() => {
+    return [
+      {
+        month: 'May 2026',
+        ranges: ['10 May - 16 May', '18 May - 24 May', '26 May - 01 June']
+      },
+      {
+        month: 'June 2026',
+        ranges: ['05 June - 11 June', '15 June - 21 June', '25 June - 01 July']
+      }
+    ]
+  }, [])
+
+  const costingDetails = useMemo(() => {
+    const rawPrice = parseInt(packageDetails.price.replace(/,/g, ''), 10) || 25000
+    return [
+      { label: 'Triple Sharing (Standard)', value: `₹${packageDetails.price}` },
+      { label: 'Double Sharing (Premium Room)', value: `₹${(rawPrice + 5000).toLocaleString('en-IN')}` }
+    ]
+  }, [packageDetails])
+
+  const stays = useMemo(() => {
+    return [
+      '3-Star Deluxe Hotel Rooms (Room + Breakfast)',
+      'Premium Houseboats (where applicable)',
+      'Comfortable Alpine Camping Tents'
+    ]
+  }, [])
+
+  const paymentPolicy = useMemo(() => {
+    return [
+      'Pay a token amount of ₹5,000 to block your seat/slot.',
+      '50% advance payment required to confirm booking 30 days before departure.',
+      'Remaining dues must be settled 15 days before the trip starts.'
+    ]
+  }, [])
+
+  const cancellationPolicy = useMemo(() => {
+    return [
+      'Cancellations made 30 days or more before the departure date will receive a 100% refund.',
+      'Cancellations made between 15 and 30 days before departure will receive a 50% refund.',
+      'No refunds will be given for cancellations made within 15 days of departure.'
+    ]
+  }, [])
+
+  const thingsToCarry = useMemo(() => {
+    return [
+      'Valid Government Photo ID Card (Aadhaar / Voter ID / Passport)',
+      'Sturdy trekking or walking shoes with decent grip',
+      'Warm jackets, thermals, and windcheaters',
+      'Personal water bottle, towels, and toiletries kit',
+      'Power bank and spare camera batteries',
+      'Sunscreen lotion (SPF 50+), sunglasses, and lip balm',
+      'Personal medications and basic first aid kit'
+    ]
+  }, [])
+
+  const travelEssentials = useMemo(() => {
+    return [
+      {
+        title: 'Mandatory Documents',
+        items: ['Original Govt ID Card', 'Printout of Voucher/Itinerary', 'Medical clearance certificate (if high-altitude)']
+      },
+      {
+        title: 'Clothing & Footwear',
+        items: ['Quick-dry outfits', 'Comfortable woolen socks', 'Poncho or raincoat']
+      }
+    ]
+  }, [])
+
+  // Action handlers
+  const handleBookNow = () => {
+    setBookingOpen(true)
+  }
+
+  const handleSelectOption = (label: string, valueStr: string) => {
+    const numericPrice = parseInt(valueStr.replace(/[^\d]/g, ''), 10) || 0
+    const item = { name: label, price: numericPrice }
+
+    setSelections(prev => {
+      const exists = prev.some(i => i.name === label)
+      if (exists) {
+        return prev.filter(i => i.name !== label)
+      } else {
+        return [item] // Support toggling single choice options
+      }
+    })
+  }
+
+  const scrollActiveTabIntoView = (tabId: string) => {
+    if (typeof window === 'undefined' || !tabContainerRef.current) return
+
+    const container = tabContainerRef.current
+    const activeTab = container.querySelector(`[data-tab-id="${tabId}"]`) as HTMLElement
+
+    if (activeTab) {
+      const containerRect = container.getBoundingClientRect()
+      const tabRect = activeTab.getBoundingClientRect()
+
+      const isTabVisible = tabRect.left >= containerRect.left &&
+        tabRect.right <= containerRect.right
+
+      if (!isTabVisible) {
+        const scrollLeft = tabRect.left - containerRect.left - (containerRect.width / 2) + (tabRect.width / 2)
+        container.scrollTo({
+          left: container.scrollLeft + scrollLeft,
+          behavior: 'smooth'
+        })
+      }
+    }
+  }
+
+  const toggleDay = (dayNum: number) => {
+    setExpandedDays(prev =>
+      prev.includes(dayNum)
+        ? prev.filter(d => d !== dayNum)
+        : [...prev, dayNum]
     )
   }
 
+  const scrollToSection = (sectionId: string) => {
+    if (typeof window === 'undefined') return
+    const el = document.getElementById(sectionId)
+    if (el) {
+      const navbarHeight = 80
+      const tabNavbarHeight = 24
+      const totalOffset = navbarHeight + tabNavbarHeight + 20
+
+      const elementPosition = el.getBoundingClientRect().top + window.pageYOffset
+      const offsetPosition = elementPosition - totalOffset
+
+      window.scrollTo({
+        top: offsetPosition,
+        behavior: 'smooth'
+      })
+    }
+    scrollActiveTabIntoView(sectionId)
+  }
+
+  // Pre-configured WhatsApp Url
+  const whatsappMsg = `Hi Travel Castle! I'm planning for the ${packageDetails.title} trip. Can you help me with details?`
+  const encodedWhatsappMsg = encodeURIComponent(whatsappMsg)
+  const whatsappUrl = `https://wa.me/919809660999?text=${encodedWhatsappMsg}`
+
+  const difficultyColor =
+    difficulty === 'Easy' ? 'bg-emerald-100 text-emerald-700' :
+      difficulty === 'Moderate' ? 'bg-amber-100 text-amber-700' :
+        'bg-rose-100 text-rose-700'
+
   return (
-    <div className="min-h-screen bg-[#050505] text-white selection:bg-primary/30">
+    <div className="min-h-screen flex flex-col bg-white">
+      <main className="grow">
+        {/* HERO SECTION */}
+        <div className="relative h-[50vh] sm:h-[45vh] md:h-[70vh] overflow-hidden pt-20">
+          <TripHeroCarousel media={heroMedia} />
 
-      {/* Premium Hero Section */}
-      <section className="relative h-[80vh] min-h-[500px] w-full flex items-end pb-12 pt-20">
-        <div className="absolute inset-0 z-0">
-          <Image
-            src={packageDetails.heroImage}
-            alt={packageDetails.title}
-            fill
-            className="object-cover"
-            priority
-          />
-          <div className="absolute inset-0 bg-gradient-to-t from-background via-black/50 to-transparent"></div>
-        </div>
-
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10 w-full animate-slide-in-up">
-          <Link href="/" className="inline-flex items-center gap-2 text-gray-300 hover:text-white transition-colors group mb-6 bg-black/20 backdrop-blur-sm px-4 py-1.5 rounded-full border border-white/10 w-fit">
-            <ArrowLeft className="w-4 h-4 group-hover:-translate-x-1 transition-transform" />
-            <span className="text-sm font-medium">Back to Home</span>
-          </Link>
-
-          <div className="flex flex-col md:flex-row md:items-end justify-between gap-8">
-            <div className="max-w-3xl">
-              <div className="inline-flex items-center gap-2 mb-4 px-4 py-1.5 rounded-full bg-white/10 backdrop-blur-md border border-white/20">
-                <Sparkles className="w-4 h-4 text-primary" />
-                <span className="text-white font-bold uppercase text-xs tracking-widest">{packageDetails.category}</span>
-              </div>
-              <h1 className="text-4xl md:text-6xl lg:text-7xl font-extrabold text-white mb-6 leading-[1.1] drop-shadow-2xl tracking-tight">
-                {packageDetails.title}
-              </h1>
-
-              <div className="flex flex-wrap gap-3">
-                <div className="flex items-center gap-2 bg-black/40 backdrop-blur-md px-4 py-2.5 rounded-xl border border-white/10 text-white shadow-xl">
-                  <Users className="w-4 h-4 text-primary" />
-                  <span className="text-sm font-medium">{packageDetails.groupSize}</span>
-                </div>
-                <div className="flex items-center gap-2 bg-black/40 backdrop-blur-md px-4 py-2.5 rounded-xl border border-white/10 text-white shadow-xl">
-                  <Calendar className="w-4 h-4 text-primary" />
-                  <span className="text-sm font-medium">{packageDetails.duration}</span>
-                </div>
-                <div className="flex items-center gap-2 bg-black/40 backdrop-blur-md px-4 py-2.5 rounded-xl border border-white/10 text-white shadow-xl">
-                  <MapPin className="w-4 h-4 text-primary" />
-                  <span className="text-sm font-medium">{packageDetails.location}</span>
-                </div>
-              </div>
-            </div>
-
-            <div className="flex flex-col sm:flex-row gap-4 w-full md:w-auto mt-6 md:mt-0">
-              <Button variant="outline" className="h-14 px-6 rounded-xl border-white/20 bg-black/40 backdrop-blur-md text-white hover:bg-white/10 font-bold hover:scale-105 transition-all">
-                <Share2 className="w-5 h-5 mr-2" /> Share
-              </Button>
-              <Button className="h-14 px-8 rounded-xl bg-primary hover:bg-accent text-white font-bold shadow-[0_0_20px_rgba(var(--primary-rgb),0.3)] hover:scale-105 transition-all">
-                <Download className="w-5 h-5 mr-2" /> Download Itinerary
-              </Button>
+          <div className="absolute inset-0 bg-linear-to-r from-slate-950/90 via-slate-950/40 to-transparent" />
+          <div className="absolute inset-x-0 bottom-0 flex items-end">
+            <div className="w-full max-w-6xl mx-auto px-4 sm:px-5 md:px-6 pb-6 sm:pb-8 lg:pb-10">
+              {/* Overlay elements can be rendered here */}
             </div>
           </div>
         </div>
-      </section>
 
-      {/* Main Content */}
-      <section className="py-12 bg-[#050505] relative z-20">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex flex-col lg:flex-row gap-12">
+        {/* STICKY TAB NAVBAR */}
+        <div className="sticky top-20 z-40 bg-white border-b shadow-sm">
+          <div className="max-w-6xl mx-auto px-4 sm:px-5 md:px-6 flex">
+            <div className="flex w-fit overflow-hidden">
+              <div
+                ref={tabContainerRef}
+                className="flex w-fit overflow-x-auto gap-2 sm:gap-4 py-0 mr-auto scrollbar-none"
+              >
+                {[
+                  { id: 'overview', label: 'Overview' },
+                  { id: 'itinerary', label: 'Itinerary' },
+                  { id: 'batches', label: 'Batches' },
+                  { id: 'costing', label: 'Costing' },
+                  { id: 'note', label: 'Note' },
+                  { id: 'stays', label: 'Stays' },
+                  { id: 'inclusions', label: 'Inclusions' },
+                  { id: 'exclusions', label: 'Exclusions' },
+                  { id: 'payment', label: 'Payment Policy' },
+                  { id: 'cancellation', label: 'Cancellation' },
+                  { id: 'things-to-carry', label: 'Things To Carry' },
+                  { id: 'travel-essentials', label: 'Travel Essentials' },
+                ].map(tab => (
+                  <button
+                    key={tab.id}
+                    data-tab-id={tab.id}
+                    onClick={() => scrollToSection(tab.id)}
+                    className={`px-4 py-4 text-sm font-semibold whitespace-nowrap border-b-2 transition-colors ${activeTab === tab.id
+                        ? 'border-primary text-primary'
+                        : 'border-transparent text-slate-600 hover:text-slate-900'
+                      }`}
+                  >
+                    {tab.label}
+                  </button>
+                ))}
+              </div>
+            </div>
+          </div>
+        </div>
 
-            {/* Left Content (Tabs & Information) */}
-            <div className="w-full lg:w-[65%] xl:w-[70%]">
-              <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
-                <div className="sticky top-[72px] z-40 bg-[#050505]/95 backdrop-blur pt-4 pb-4 border-b border-white/10 mb-8">
-                  <TabsList className="inline-flex h-14 items-center justify-start rounded-full bg-black/40 border border-white/10 p-1 w-full overflow-x-auto hide-scrollbar">
-                    <TabsTrigger value="overview" className="rounded-full px-6 h-12 font-medium text-gray-400 data-[state=active]:bg-primary data-[state=active]:text-black hover:text-white transition-all whitespace-nowrap">Overview</TabsTrigger>
-                    <TabsTrigger value="itinerary" className="rounded-full px-6 h-12 font-medium text-gray-400 data-[state=active]:bg-primary data-[state=active]:text-black hover:text-white transition-all whitespace-nowrap">Itinerary</TabsTrigger>
-                    <TabsTrigger value="costing" className="rounded-full px-6 h-12 font-medium text-gray-400 data-[state=active]:bg-primary data-[state=active]:text-black hover:text-white transition-all whitespace-nowrap">Costing</TabsTrigger>
-                    <TabsTrigger value="other-info" className="rounded-full px-6 h-12 font-medium text-gray-400 data-[state=active]:bg-primary data-[state=active]:text-black hover:text-white transition-all whitespace-nowrap">Other Info</TabsTrigger>
-                  </TabsList>
+        {/* CONTENT LAYOUT GRID */}
+        <div className="max-w-6xl mx-auto px-[4vw] sm:px-[5vw] md:px-6 py-[4vh] sm:py-[5vh] md:py-[6vh]">
+          <div className="grid lg:grid-cols-[2.5fr_1fr] gap-[4vw] lg:gap-[3vw]">
+
+            {/* LEFT CONTENT */}
+            <div className="space-y-[8vh]">
+
+              {/* HEADER SECTION */}
+              <div>
+                <h1 className="text-2xl sm:text-3xl md:text-4xl font-bold tracking-tight mb-3">
+                  {packageDetails.title}
+                </h1>
+
+                <div className="flex flex-wrap items-center gap-3 text-slate-600 mb-4">
+                  <div className="flex items-center gap-1">
+                    <MapPin size={16} className="shrink-0" />
+                    <span className="text-sm sm:text-base">{packageDetails.location}</span>
+                  </div>
+                  <span className="text-slate-300">•</span>
+                  <div className="flex items-center gap-1">
+                    <CalendarIcon size={16} className="shrink-0" />
+                    <span className="text-sm sm:text-base">{packageDetails.duration}</span>
+                  </div>
                 </div>
 
-                {/* Overview Tab */}
-                <TabsContent value="overview" className="space-y-12 animate-fade-in mt-0">
-                  <div>
-                    <h2 className="text-3xl font-extrabold text-white mb-6">About This Journey</h2>
-                    <p className="text-lg text-gray-400 leading-relaxed font-light">{packageDetails.overview}</p>
-                  </div>
+                <div className="flex flex-wrap gap-3">
+                  <Badge className={`${difficultyColor} text-xs sm:text-sm px-3 py-1 font-semibold border-none`}>
+                    {difficulty}
+                  </Badge>
+                  <Badge className="bg-slate-100 text-slate-700 text-xs sm:text-sm px-3 py-1 font-semibold border-none">
+                    <Users size={14} className="mr-1" /> {groupSize}
+                  </Badge>
+                  <Badge className="bg-amber-100 text-amber-700 text-xs sm:text-sm px-3 py-1 font-semibold border-none">
+                    <Star size={14} className="mr-1 fill-amber-500 text-amber-500" /> {rating}
+                  </Badge>
+                </div>
+              </div>
 
-                  <div className="bg-white/5 border border-white/10 rounded-3xl p-8">
-                    <h3 className="text-2xl font-bold text-white mb-6">Trip Highlights</h3>
-                    <div className="grid sm:grid-cols-2 gap-4">
-                      {packageDetails.highlights.map((highlight, idx) => (
-                        <div key={idx} className="flex items-start gap-3 bg-black/20 p-4 rounded-2xl border border-white/5">
-                          <CheckCircle className="w-5 h-5 text-green-400 mt-0.5 flex-shrink-0" />
-                          <span className="text-gray-300 font-light">{highlight}</span>
-                        </div>
-                      ))}
+              {/* OVERVIEW & HIGHLIGHTS */}
+              <section id="overview" className="scroll-mt-36">
+                <h2 className="text-2xl font-bold mb-4 font-sans text-slate-900">Overview & Highlights</h2>
+                <Card className="p-4 md:p-6 space-y-4 bg-linear-to-br from-slate-50 to-white border-slate-100 shadow-sm rounded-3xl">
+                  <div className="space-y-4">
+                    <div>
+                      <p
+                        style={
+                          showFullDesc
+                            ? {}
+                            : {
+                              display: '-webkit-box',
+                              WebkitLineClamp: 4,
+                              WebkitBoxOrient: 'vertical',
+                              overflow: 'hidden',
+                            }
+                        }
+                        className="text-slate-600 leading-relaxed text-sm sm:text-base transition-all duration-300"
+                      >
+                        {packageDetails.description}
+                      </p>
+
+                      <button
+                        onClick={() => setShowFullDesc(!showFullDesc)}
+                        className="mt-2 text-primary font-bold text-sm hover:underline"
+                      >
+                        {showFullDesc ? 'Show Less' : 'Show More'}
+                      </button>
                     </div>
+
+                    {packageDetails.whyChoose?.length ? (
+                      <div className="rounded-2xl bg-slate-100/50 p-4 md:p-5 border border-slate-200/50">
+                        <ul className="space-y-2.5 text-slate-600 text-sm sm:text-base">
+                          {packageDetails.whyChoose.map((point, idx) => (
+                            <li key={idx} className="flex gap-3">
+                              <span className="text-slate-400">•</span>
+                              <span className="leading-relaxed">{point}</span>
+                            </li>
+                          ))}
+                        </ul>
+                      </div>
+                    ) : null}
                   </div>
 
-                  {/* Journey in Frames (Gallery) */}
-                  <div>
-                    <h3 className="text-2xl font-bold text-white mb-6 flex items-center gap-2">
-                      <Camera className="w-6 h-6 text-primary" /> Journey in Frames
-                    </h3>
-                    <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
-                      {[1, 2, 3, 4, 5, 6].map((i) => (
-                        <div key={i} className="relative h-40 rounded-2xl overflow-hidden group">
-                          <Image src={`/images/blog-${(i % 3) + 1}.jpg`} alt="Gallery" fill className="object-cover group-hover:scale-110 transition-transform duration-500" />
-                        </div>
-                      ))}
-                    </div>
-                  </div>
-                </TabsContent>
-
-                {/* Itinerary Tab */}
-                <TabsContent value="itinerary" className="animate-fade-in mt-0">
-                  <h2 className="text-3xl font-extrabold text-white mb-8">Detailed Itinerary</h2>
-                  <div className="space-y-6 relative before:absolute before:inset-0 before:ml-5 before:-translate-x-px before:h-full before:w-0.5 before:bg-primary/20">
-                    {packageDetails.itinerary.map((day, idx) => (
-                      <div key={idx} className="relative flex items-start gap-6 group">
-                        <div className="flex items-center justify-center w-10 h-10 rounded-full border-4 border-[#050505] bg-primary text-black font-bold flex-shrink-0 relative z-10 mt-1 shadow-[0_0_15px_rgba(var(--primary-rgb),0.4)]">
-                          D{day.day}
-                        </div>
-                        <div className="w-full bg-white/5 border border-white/10 rounded-2xl p-6 hover:border-primary/50 transition-colors">
-                          <h3 className="text-xl font-bold text-primary mb-2">{day.title}</h3>
-                          <div className="flex items-center gap-4 text-xs text-gray-400 mb-4 font-semibold uppercase tracking-wider">
-                            <span className="flex items-center gap-1"><Navigation className="w-3 h-3" /> 150 KM</span>
-                            <span className="flex items-center gap-1"><Clock className="w-3 h-3" /> 5 HRS</span>
-                          </div>
-                          <p className="text-gray-400 font-light leading-relaxed mb-4">{day.description}</p>
-                          <div className="flex flex-wrap gap-2">
-                            {day.activities.map((activity, actIdx) => (
-                              <span key={actIdx} className="px-3 py-1 bg-white/5 border border-white/10 rounded-full text-xs text-gray-300">{activity}</span>
-                            ))}
-                          </div>
-                        </div>
+                  <div className="grid sm:grid-cols-2 gap-3.5 pt-4 border-t border-slate-100">
+                    {packageDetails.highlights.map((item, i) => (
+                      <div key={i} className="flex gap-3 items-start">
+                        <span className="text-lg shrink-0 mt-0.5">✨</span>
+                        <span className="text-sm sm:text-base text-slate-700 font-medium leading-relaxed">{item}</span>
                       </div>
                     ))}
                   </div>
-                </TabsContent>
+                </Card>
+              </section>
 
-                {/* Costing Tab */}
-                <TabsContent value="costing" className="animate-fade-in space-y-12 mt-0">
-                  <div className="grid md:grid-cols-2 gap-8">
-                    <div className="bg-green-500/10 border border-green-500/20 rounded-3xl p-6">
-                      <h3 className="text-xl font-bold text-white mb-6 flex items-center gap-2"><CheckCircle className="text-green-500" /> Inclusions</h3>
-                      <ul className="space-y-4">
+              {/* ITINERARY */}
+              <section id="itinerary" className="scroll-mt-36">
+                <h2 className="text-2xl font-bold mb-4 font-sans text-slate-900">Itinerary</h2>
+                <div className="space-y-3">
+                  {Array.isArray(packageDetails.itinerary) && packageDetails.itinerary.length > 0 ? (
+                    packageDetails.itinerary.map(day => (
+                      <div
+                        key={day.day}
+                        className="border border-slate-200/80 bg-white rounded-2xl overflow-hidden hover:shadow-md transition-shadow duration-300"
+                      >
+                        <button
+                          onClick={() => toggleDay(day.day)}
+                          className="w-full flex items-start justify-between p-5 text-left grow transition-colors hover:bg-slate-50/50"
+                        >
+                          <div className="flex items-start gap-4 grow min-w-0">
+                            <div className="shrink-0">
+                              <Badge className="bg-primary/15 text-primary text-xs font-bold border-none px-3.5 py-1 rounded-full">
+                                Day {day.day}
+                              </Badge>
+                            </div>
+                            <div className="min-w-0">
+                              <h3 className="font-bold text-sm sm:text-base text-slate-900 leading-tight">
+                                {day.title}
+                              </h3>
+                              {!expandedDays.includes(day.day) && (
+                                <p className="text-xs sm:text-sm text-slate-500 line-clamp-1 mt-1 font-medium">
+                                  {day.description}
+                                </p>
+                              )}
+                            </div>
+                          </div>
+                          <ChevronDown
+                            size={20}
+                            className={`shrink-0 ml-2 text-slate-400 transition-transform duration-300 ${expandedDays.includes(day.day) ? 'rotate-180 text-primary' : ''
+                              }`}
+                          />
+                        </button>
+
+                        {expandedDays.includes(day.day) && (
+                          <div className="px-5 pb-5 pt-1 bg-slate-50/40 border-t border-slate-100">
+                            <p className="text-sm sm:text-base text-slate-650 leading-relaxed">
+                              {day.description}
+                            </p>
+
+                            {/* Itinerary Activities */}
+                            {day.activities?.length ? (
+                              <div className="flex flex-wrap gap-2 mt-4 pt-4 border-t border-slate-100">
+                                {day.activities.map((act, actIdx) => (
+                                  <span key={actIdx} className="px-3 py-1 bg-white border border-slate-200 rounded-full text-xs font-semibold text-slate-600 shadow-2xs">
+                                    {act}
+                                  </span>
+                                ))}
+                              </div>
+                            ) : null}
+                          </div>
+                        )}
+                      </div>
+                    ))
+                  ) : (
+                    <div className="rounded-2xl border border-dashed border-slate-350 bg-slate-50 p-6 text-slate-600 text-center font-medium">
+                      Itinerary details will be available shortly.
+                    </div>
+                  )}
+                </div>
+              </section>
+
+              {/* BATCHES */}
+              <section id="batches" className="scroll-mt-36">
+                <h2 className="text-2xl font-bold mb-4 font-sans text-slate-900">Choose Departure Date</h2>
+                <Card className="p-5 border border-slate-200/80 shadow-xs rounded-3xl bg-white space-y-4">
+                  <p className="text-sm font-semibold text-slate-500">
+                    This trip is fully customizable. Please select your preferred departure date:
+                  </p>
+                  <div className="flex flex-col md:flex-row gap-8 items-start justify-center">
+                    <div className="border border-slate-100 rounded-2xl p-4 shadow-2xs bg-white mx-auto md:mx-0">
+                      <Calendar
+                        mode="single"
+                        selected={selectedDate}
+                        onSelect={setSelectedDate}
+                        disabled={{ before: new Date() }}
+                        className="rounded-md border-none"
+                      />
+                    </div>
+                    <div className="space-y-4 max-w-sm flex-1">
+                      <div className="rounded-2xl bg-primary/5 border border-primary/10 p-5 space-y-3">
+                        <h4 className="font-bold text-slate-900 flex items-center gap-2">
+                          <Sparkles className="w-4 h-4 text-primary" />
+                          Customized Dynamic Trip
+                        </h4>
+                        <p className="text-xs text-slate-600 leading-relaxed">
+                          Since all our itineraries are bespoke, your selected date serves as the tentative launch date. Our travel experts will finalize everything based on your specific requirements.
+                        </p>
+                      </div>
+
+                      {selectedDate ? (
+                        <div className="rounded-2xl bg-emerald-50/70 border border-emerald-100 p-5 space-y-2">
+                          <p className="text-xs text-slate-500 uppercase tracking-wider font-bold">Selected Date</p>
+                          <p className="text-lg font-extrabold text-slate-800 font-sans">
+                            {selectedDate.toLocaleDateString('en-US', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' })}
+                          </p>
+                          <Button
+                            className="w-full mt-2 h-11 bg-primary text-white hover:bg-primary/90 font-bold rounded-xl"
+                            onClick={handleBookNow}
+                          >
+                            Book with this Date
+                          </Button>
+                        </div>
+                      ) : (
+                        <div className="rounded-2xl bg-slate-50 border border-slate-150 p-5 text-center">
+                          <p className="text-sm text-slate-550 font-semibold">
+                            Please select a date from the calendar to plan your departure.
+                          </p>
+                        </div>
+                      )}
+                    </div>
+                  </div>
+                </Card>
+              </section>
+
+              {/* COSTING */}
+              <section id="costing" className="scroll-mt-36">
+                <h2 className="text-2xl font-bold mb-4 font-sans text-slate-900">Costing Table</h2>
+                <Card className="overflow-hidden border border-slate-200/80 shadow-xs rounded-2xl bg-white">
+                  <div className="overflow-x-auto">
+                    <table className="min-w-full text-left divide-y divide-slate-100">
+                      <thead className="bg-slate-50">
+                        <tr>
+                          <th className="px-5 py-4 text-xs font-bold text-slate-500 uppercase tracking-wider">Option</th>
+                          <th className="px-5 py-4 text-xs font-bold text-slate-500 uppercase tracking-wider">Price</th>
+                        </tr>
+                      </thead>
+                      <tbody className="divide-y divide-slate-100">
+                        {costingDetails.map((item, idx) => {
+                          const isSelected = selections.some(s => s.name === item.label)
+                          return (
+                            <tr key={idx} className="bg-white hover:bg-slate-50/50 transition-colors">
+                              <td className="px-5 py-4 text-slate-700 font-bold flex items-center gap-3">
+                                <input
+                                  type="checkbox"
+                                  checked={isSelected}
+                                  onChange={() => handleSelectOption(item.label, item.value)}
+                                  className="w-4.5 h-4.5 rounded-xs border-slate-350 text-primary focus:ring-primary focus:ring-offset-0 cursor-pointer"
+                                />
+                                <span>{item.label}</span>
+                              </td>
+                              <td className="px-5 py-4 text-slate-900 font-extrabold text-base">{item.value}</td>
+                            </tr>
+                          )
+                        })}
+                      </tbody>
+                    </table>
+                  </div>
+                </Card>
+              </section>
+
+              {/* NOTE */}
+              <section id="note" className="scroll-mt-36">
+                <h2 className="text-2xl font-bold mb-4 font-sans text-slate-900">Note</h2>
+                <Card className="p-5 border-slate-200/80 shadow-xs rounded-2xl bg-linear-to-br from-amber-50/40 to-white border-l-4 border-l-amber-500">
+                  <ul className="list-disc list-inside space-y-2.5 text-sm sm:text-base text-slate-700 leading-relaxed font-medium">
+                    {packageDetails.bookingInfo.map((item, idx) => (
+                      <li key={idx} className="marker:text-amber-500">{item}</li>
+                    ))}
+                  </ul>
+                </Card>
+              </section>
+
+              {/* STAYS */}
+              <section id="stays" className="scroll-mt-36">
+                <h2 className="text-2xl font-bold mb-4 font-sans text-slate-900">Stays</h2>
+                <Card className="p-5 border-slate-200/80 shadow-xs rounded-2xl bg-white">
+                  <div className="space-y-3.5 pl-1">
+                    {stays.map((item, idx) => (
+                      <div key={idx} className="flex gap-3 items-center">
+                        <span className="text-slate-400 shrink-0 text-sm">•</span>
+                        <span className="text-sm sm:text-base text-slate-700 font-semibold">{item}</span>
+                      </div>
+                    ))}
+                  </div>
+                </Card>
+              </section>
+
+              {/* ACCORDION POLICIES & ESSENTIALS */}
+              <Accordion type="single" collapsible defaultValue="inclusions" className="space-y-4">
+                <section id="inclusions" className="scroll-mt-36">
+                  <AccordionItem value="inclusions" className="border border-slate-200/80 bg-white rounded-2xl overflow-hidden px-5 py-1">
+                    <AccordionTrigger className="text-lg font-bold text-slate-900 hover:no-underline py-4">What's Included</AccordionTrigger>
+                    <AccordionContent className="pb-5 pt-2">
+                      <div className="grid gap-3 font-semibold">
                         {packageDetails.inclusions.map((item, idx) => (
-                          <li key={idx} className="flex items-start gap-3"><CheckCircle className="w-5 h-5 text-green-400 flex-shrink-0" /><span className="text-sm text-gray-300">{item}</span></li>
+                          <div key={idx} className="flex gap-3 items-start">
+                            <span className="text-emerald-500 shrink-0">✅</span>
+                            <span className="text-sm sm:text-base text-slate-650 leading-relaxed">{item}</span>
+                          </div>
                         ))}
-                      </ul>
-                    </div>
-                    <div className="bg-red-500/10 border border-red-500/20 rounded-3xl p-6">
-                      <h3 className="text-xl font-bold text-white mb-6 flex items-center gap-2"><XCircle className="text-red-500" /> Exclusions</h3>
-                      <ul className="space-y-4">
+                      </div>
+                    </AccordionContent>
+                  </AccordionItem>
+                </section>
+
+                <section id="exclusions" className="scroll-mt-36">
+                  <AccordionItem value="exclusions" className="border border-slate-200/80 bg-white rounded-2xl overflow-hidden px-5 py-1">
+                    <AccordionTrigger className="text-lg font-bold text-slate-900 hover:no-underline py-4">What's Not Included</AccordionTrigger>
+                    <AccordionContent className="pb-5 pt-2">
+                      <div className="grid gap-3 font-semibold">
                         {packageDetails.exclusions.map((item, idx) => (
-                          <li key={idx} className="flex items-start gap-3"><XCircle className="w-5 h-5 text-red-400 flex-shrink-0" /><span className="text-sm text-gray-300">{item}</span></li>
+                          <div key={idx} className="flex gap-3 items-start">
+                            <span className="text-rose-500 shrink-0">❌</span>
+                            <span className="text-sm sm:text-base text-slate-650 leading-relaxed">{item}</span>
+                          </div>
                         ))}
-                      </ul>
-                    </div>
-                  </div>
+                      </div>
+                    </AccordionContent>
+                  </AccordionItem>
+                </section>
 
-                  <div>
-                    <h3 className="text-2xl font-bold text-white mb-6">Upcoming Batches & Costing</h3>
-                    <div className="space-y-4">
-                      {['May 2026', 'June 2026'].map((month, idx) => (
-                        <div key={idx} className="bg-white/5 border border-white/10 rounded-2xl p-6">
-                          <div className="flex justify-between items-center mb-6">
-                            <h4 className="text-xl font-bold text-primary">{month}</h4>
-                            <span className="px-3 py-1 bg-green-500/20 text-green-400 text-xs font-bold rounded-full uppercase tracking-wider">{idx === 0 ? 'Filling Fast' : 'Available'}</span>
+                <section id="payment" className="scroll-mt-36">
+                  <AccordionItem value="payment" className="border border-slate-200/80 bg-white rounded-2xl overflow-hidden px-5 py-1">
+                    <AccordionTrigger className="text-lg font-bold text-slate-900 hover:no-underline py-4">Payment Policy</AccordionTrigger>
+                    <AccordionContent className="pb-5 pt-2">
+                      <div className="space-y-3 font-semibold">
+                        {paymentPolicy.map((item, idx) => (
+                          <div key={idx} className="flex gap-3 items-start">
+                            <span className="text-slate-400 shrink-0 mt-0.5">•</span>
+                            <span className="text-sm sm:text-base text-slate-650 leading-relaxed">{item}</span>
                           </div>
-                          <div className="grid sm:grid-cols-2 gap-4">
-                            <div className="bg-black/30 p-4 rounded-xl flex justify-between items-center border border-white/5">
-                              <span className="text-gray-300">Double Sharing</span>
-                              <span className="text-white font-bold text-lg">₹{parseInt(packageDetails.price.replace(/,/g, '')) + 5000}</span>
-                            </div>
-                            <div className="bg-black/30 p-4 rounded-xl flex justify-between items-center border border-white/5">
-                              <span className="text-gray-300">Triple Sharing</span>
-                              <span className="text-white font-bold text-lg">₹{packageDetails.price}</span>
+                        ))}
+                      </div>
+                    </AccordionContent>
+                  </AccordionItem>
+                </section>
+
+                <section id="cancellation" className="scroll-mt-36">
+                  <AccordionItem value="cancellation" className="border border-slate-200/80 bg-white rounded-2xl overflow-hidden px-5 py-1">
+                    <AccordionTrigger className="text-lg font-bold text-slate-900 hover:no-underline py-4">Cancellation Policy</AccordionTrigger>
+                    <AccordionContent className="pb-5 pt-2">
+                      <div className="space-y-3 font-semibold">
+                        {cancellationPolicy.map((item, idx) => (
+                          <div key={idx} className="flex gap-3 items-start">
+                            <span className="text-slate-400 shrink-0 mt-0.5">•</span>
+                            <span className="text-sm sm:text-base text-slate-650 leading-relaxed">{item}</span>
+                          </div>
+                        ))}
+                      </div>
+                    </AccordionContent>
+                  </AccordionItem>
+                </section>
+
+                <section id="things-to-carry" className="scroll-mt-36">
+                  <AccordionItem value="things-to-carry" className="border border-slate-200/80 bg-white rounded-2xl overflow-hidden px-5 py-1">
+                    <AccordionTrigger className="text-lg font-bold text-slate-900 hover:no-underline py-4">Things To Carry</AccordionTrigger>
+                    <AccordionContent className="pb-5 pt-2">
+                      <div className="space-y-3 font-semibold">
+                        {thingsToCarry.map((item, idx) => (
+                          <div key={idx} className="flex gap-3 items-start">
+                            <span className="text-slate-400 shrink-0 mt-0.5">•</span>
+                            <span className="text-sm sm:text-base text-slate-650 leading-relaxed">{item}</span>
+                          </div>
+                        ))}
+                      </div>
+                    </AccordionContent>
+                  </AccordionItem>
+                </section>
+
+                <section id="travel-essentials" className="scroll-mt-36">
+                  <AccordionItem value="travel-essentials" className="border border-slate-200/80 bg-white rounded-2xl overflow-hidden px-5 py-1">
+                    <AccordionTrigger className="text-lg font-bold text-slate-900 hover:no-underline py-4">Travel Essentials</AccordionTrigger>
+                    <AccordionContent className="pb-5 pt-2">
+                      <div className="space-y-6">
+                        {travelEssentials.map((group, idx) => (
+                          <div key={idx}>
+                            <h3 className="font-bold text-base text-slate-800 mb-3">{group.title}</h3>
+                            <div className="grid sm:grid-cols-2 gap-2">
+                              {group.items.map((item, itemIdx) => (
+                                <div key={itemIdx} className="rounded-xl bg-slate-100 px-4 py-2.5 text-sm font-semibold text-slate-650 border border-slate-200/40">
+                                  {item}
+                                </div>
+                              ))}
                             </div>
                           </div>
-                        </div>
-                      ))}
-                    </div>
-                  </div>
-                </TabsContent>
+                        ))}
+                      </div>
+                    </AccordionContent>
+                  </AccordionItem>
+                </section>
+              </Accordion>
 
-                {/* Other Info Tab */}
-                <TabsContent value="other-info" className="animate-fade-in space-y-8 mt-0">
-                  <div className="bg-white/5 border border-white/10 rounded-3xl p-8">
-                    <h3 className="text-2xl font-bold text-white mb-6 flex items-center gap-2"><Luggage className="text-primary" /> Things to Carry</h3>
-                    <div className="grid sm:grid-cols-2 gap-4">
-                      {['Valid ID Proof', 'Comfortable Trekking Shoes', 'Warm Layers & Thermals', 'Power Bank', 'Sunscreen & Sunglasses', 'Personal Medications'].map((item, idx) => (
-                        <div key={idx} className="flex items-center gap-3 bg-black/40 p-3 rounded-xl border border-white/5">
-                          <div className="w-2 h-2 rounded-full bg-primary" />
-                          <span className="text-gray-300 text-sm">{item}</span>
-                        </div>
-                      ))}
-                    </div>
-                  </div>
-                  <div className="bg-white/5 border border-white/10 rounded-3xl p-8">
-                    <h3 className="text-2xl font-bold text-white mb-6">Important Policies</h3>
-                    <ul className="space-y-4">
-                      {packageDetails.bookingInfo.map((info, idx) => (
-                        <li key={idx} className="text-gray-400 font-light flex items-start gap-3">
-                          <Shield className="w-5 h-5 text-primary flex-shrink-0 mt-0.5" />
-                          <span>{info}</span>
-                        </li>
-                      ))}
-                    </ul>
-                  </div>
-                </TabsContent>
-              </Tabs>
-            </div>
-
-            {/* Right Content (Sticky Sidebar Widget) */}
-            <div className="w-full lg:w-[35%] xl:w-[30%]">
-              <div className="sticky top-28 space-y-6">
-
-                {/* Costing Widget */}
-                <Card className="p-6 bg-white/5 border border-white/10 rounded-3xl shadow-2xl relative overflow-hidden group backdrop-blur-xl">
-                  <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-primary to-green-400 group-hover:h-2 transition-all duration-300"></div>
-                  <div className="mb-6 mt-2">
-                    <p className="text-sm text-gray-400 uppercase tracking-widest font-semibold mb-1">Starting from</p>
-                    <div className="flex items-end gap-2">
-                      <span className="text-4xl font-extrabold text-white">₹{packageDetails.price}/-</span>
-                    </div>
-                    <span className="text-gray-400 text-xs mt-1 block">per person (Triple Sharing)</span>
-                  </div>
-
-                  <div className="space-y-3 mb-6">
-                    <div className="flex justify-between items-center p-3 bg-white/5 rounded-xl text-sm border border-white/5">
-                      <span className="text-gray-400 flex items-center gap-2"><Clock className="w-4 h-4" /> Duration</span>
-                      <span className="text-white font-bold">{packageDetails.duration}</span>
-                    </div>
-                    <div className="flex justify-between items-center p-3 bg-white/5 rounded-xl text-sm border border-white/5">
-                      <span className="text-gray-400 flex items-center gap-2"><MapPin className="w-4 h-4" /> Pickup/Drop</span>
-                      <span className="text-white font-bold">{packageDetails.location}</span>
-                    </div>
-                  </div>
-
-                  <Button className="w-full h-14 bg-gradient-to-r from-primary to-green-500 hover:from-primary/90 hover:to-green-500/90 text-white font-bold text-lg rounded-xl shadow-[0_0_20px_rgba(var(--primary-rgb),0.3)] hover:scale-[1.02] transition-transform">
-                    Book Now
-                  </Button>
-
-                  <div className="text-center mt-4 bg-primary/10 rounded-lg p-2 border border-primary/20">
-                    <p className="text-xs text-primary font-bold">
-                      *Pay a token amount of ₹5000/- to block your seat.
-                    </p>
-                  </div>
-                </Card>
-
-                {/* Lead Capture Widget */}
-                <Card className="p-6 bg-gradient-to-b from-primary/10 to-transparent border border-primary/20 rounded-3xl shadow-xl">
-                  <div className="flex items-center gap-3 mb-2">
-                    <div className="w-10 h-10 rounded-full bg-primary/20 flex items-center justify-center">
-                      <Phone className="w-5 h-5 text-primary" />
-                    </div>
-                    <h3 className="text-xl font-bold text-white">Wanderlust Calling?</h3>
-                  </div>
-                  <p className="text-sm text-gray-400 mb-6 font-light">Allow our experts to call you back & help you plan!</p>
-
-                  <form className="space-y-4">
-                    <input type="text" placeholder="Your Name" className="w-full h-12 px-4 rounded-xl bg-black/40 border border-white/10 text-white focus:outline-none focus:border-primary transition-colors placeholder:text-gray-500" />
-                    <input type="tel" placeholder="Phone Number" className="w-full h-12 px-4 rounded-xl bg-black/40 border border-white/10 text-white focus:outline-none focus:border-primary transition-colors placeholder:text-gray-500" />
-                    <Button type="button" className="w-full h-12 bg-white text-black hover:bg-gray-200 font-bold rounded-xl transition-colors">
-                      Send Callback Request
-                    </Button>
-                  </form>
-                </Card>
-
+              {/* MOBILE BOTTOM CTA TRIGGER */}
+              <div className="lg:hidden space-y-3">
+                <Button size="lg" className="w-full h-13 text-base font-bold shadow-md" onClick={() => setCallbackOpen(true)}>
+                  <Phone size={18} /> Enquire Now
+                </Button>
               </div>
             </div>
 
-          </div>
-        </div>
-      </section>
+            {/* RIGHT SIDEBAR */}
+            <div className="hidden lg:block space-y-[3vh]">
+              <div className="lg:sticky lg:top-32">
+                {/* PRICE CARD */}
+                <Card className="p-6 shadow-luxury border-slate-200/80 bg-white space-y-5 rounded-3xl relative overflow-hidden group">
+                  <div className="absolute top-0 left-0 w-full h-1.5 bg-gradient-to-r from-primary to-indigo-500 group-hover:h-2 transition-all duration-300"></div>
 
-      {/* Floating WhatsApp */}
-      <a href="https://wa.me/919876543210" target="_blank" rel="noopener noreferrer" className="fixed bottom-6 right-6 w-14 h-14 bg-green-500 rounded-full flex items-center justify-center shadow-[0_0_20px_rgba(34,197,94,0.4)] hover:scale-110 transition-transform z-50 cursor-pointer">
-        <MessageCircle className="w-7 h-7 text-white" />
-      </a>
+                  <div>
+                    <p className="text-xs uppercase tracking-widest text-slate-500 font-bold">
+                      {selections.length > 0 ? 'Current Selection' : 'Starting Price'}
+                    </p>
+                    <p className="text-3xl font-extrabold text-primary mt-1.5">
+                      ₹{(selections.length > 0 ? total : lowestPrice).toLocaleString('en-IN')}
+                    </p>
+                    <p className="text-xs text-slate-400 font-bold mt-2">
+                      {selections.length > 0 ? `${selections.length} sharing option selected` : 'per person'}
+                    </p>
+                  </div>
 
-      {/* Related Packages - Redesigned */}
-      <section className="py-24 bg-gradient-to-b from-[#050505] via-black/40 to-[#050505] border-t border-white/10">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="text-center mb-16">
-            <h2 className="text-4xl font-extrabold text-white mb-4">You Might Also <span className="text-transparent bg-clip-text bg-gradient-to-r from-primary to-green-400">Love</span></h2>
-            <p className="text-lg text-gray-400 font-light">Explore more amazing travel experiences curated for you.</p>
-          </div>
-
-          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
-            {packageDetails.relatedPackages.map((pkg, idx) => (
-              <Link key={idx} href={`/packages/${pkg.id}`} className="block">
-                <Card className="relative overflow-hidden border-0 bg-transparent h-[350px] flex flex-col group cursor-pointer shadow-2xl rounded-3xl">
-                  <Image
-                    src={pkg.image}
-                    alt={pkg.title}
-                    fill
-                    className="object-cover group-hover:scale-110 transition-transform duration-700 ease-in-out"
-                  />
-                  <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/40 to-transparent"></div>
-                  <div className="absolute inset-0 p-6 flex flex-col justify-end z-10">
-                    <h3 className="text-2xl font-bold text-white mb-2 group-hover:text-primary transition-colors duration-300">
-                      {pkg.title}
-                    </h3>
-                    <div className="flex justify-between items-end mt-2">
-                      <div>
-                        <p className="text-gray-400 text-xs uppercase tracking-widest mb-1">Starting at</p>
-                        <span className="text-primary font-extrabold text-xl">₹{pkg.price}</span>
-                      </div>
-                      <span className="text-sm font-medium text-white/80 bg-white/10 px-3 py-1 rounded-full backdrop-blur-md">
-                        {pkg.duration}
-                      </span>
-                    </div>
+                  <div className="grid gap-3 pt-2">
+                    <Button
+                      size="lg"
+                      className="w-full h-13 font-bold text-base shadow-sm"
+                      onClick={handleBookNow}
+                    >
+                      <Phone size={18} /> Book Now
+                    </Button>
+                    <Button
+                      size="lg"
+                      variant="outline"
+                      className="w-full h-13 font-bold text-base hover:bg-slate-50 border-slate-200"
+                      onClick={() => setCallbackOpen(true)}
+                    >
+                      <MessageCircle size={18} /> Request Callback
+                    </Button>
                   </div>
                 </Card>
-              </Link>
-            ))}
+
+                {/* HELPLINE CONTACT CARD */}
+                <Card className="p-6 mt-[3vh] border-slate-200/85 rounded-3xl bg-linear-to-b from-primary/5 to-transparent">
+                  <h3 className="font-bold text-lg text-slate-800 mb-1">Need Help?</h3>
+                  <p className="text-sm text-slate-500 font-medium mb-5">
+                    Contact our travel experts anytime
+                  </p>
+
+                  <div className="space-y-3.5 text-sm font-bold">
+                    <a
+                      href={`mailto:${contactEmail}`}
+                      className="flex items-center gap-2 text-primary hover:underline"
+                    >
+                      <span className="font-semibold">{contactEmail}</span>
+                    </a>
+                    <a
+                      href={`tel:${contactPhone}`}
+                      className="flex items-center gap-2.5 text-slate-700 hover:text-primary transition-colors"
+                    >
+                      <Phone size={16} className="text-slate-400" />
+                      {contactPhoneDisplay}
+                    </a>
+                    <a
+                      href={instagramUrl}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="flex items-center gap-2.5 text-slate-700 hover:text-primary transition-colors"
+                    >
+                      <MessageCircle size={16} className="text-slate-400" />
+                      Instagram
+                    </a>
+                  </div>
+                </Card>
+
+                {/* DOWNLOAD ITINERARY */}
+                <Button
+                  variant="outline"
+                  className="w-full h-12 mt-[3vh] justify-center font-bold border-slate-200 hover:bg-slate-50 rounded-2xl"
+                  onClick={() => alert(`PDF download feature for "${packageDetails.title}" coming soon!`)}
+                >
+                  <Download size={18} /> Download Itinerary
+                </Button>
+              </div>
+            </div>
           </div>
         </div>
-      </section>
+      </main>
+
+      {/* MOBILE BOTTOM STICKY CTA BAR */}
+      <div className="fixed bottom-0 left-0 right-0 bg-white lg:hidden border-t border-slate-200/80 shadow-2xl z-40">
+        <div className="max-w-6xl mx-auto px-6 py-4 flex items-center justify-between gap-4">
+          <div>
+            <p className="text-xxs text-slate-400 uppercase tracking-widest font-bold">
+              {selections.length > 0 ? 'Total selected' : 'Starting at'}
+            </p>
+            <p className="text-lg font-extrabold text-slate-850">
+              ₹{(selections.length > 0 ? total : lowestPrice).toLocaleString('en-IN')}
+            </p>
+          </div>
+          <Button onClick={handleBookNow} className="h-12 px-6 font-bold rounded-xl shadow-md shrink-0">
+            Book Now
+          </Button>
+        </div>
+      </div>
+
+      {/* MOBILE BOTTOM PADDING FOR STICKY CTA */}
+      <div className="h-[90px] lg:h-0 min-h-20 lg:min-h-0" />
+
+      {/* FLOATING WHATSAPP BUTTON */}
+      <a
+        href={whatsappUrl}
+        target="_blank"
+        rel="noopener noreferrer"
+        className="fixed bottom-24 lg:bottom-6 right-6 w-14 h-14 bg-emerald-500 rounded-full flex items-center justify-center shadow-[0_4px_24px_rgba(16,185,129,0.45)] hover:scale-110 hover:-translate-y-1 transition-all z-50 cursor-pointer border border-emerald-400 group"
+      >
+        <MessageCircle className="w-7 h-7 text-white" />
+        <span className="absolute right-0 top-0 w-3.5 h-3.5 bg-rose-500 rounded-full border-2 border-white animate-pulse" />
+      </a>
+
+      {/* GALLERY SECTION */}
+      <GallerySection />
+
+      <BookingDialog
+        open={bookingOpen}
+        onOpenChange={setBookingOpen}
+        packageTitle={packageDetails.title}
+        optionName={currentOptionName}
+        totalPrice={currentTotalPrice}
+        selectedDate={selectedDate}
+      />
+
+      <RequestCallbackDialog
+        open={callbackOpen}
+        onOpenChange={setCallbackOpen}
+        title={packageDetails.title}
+        price={lowestPrice}
+        selectedDate={selectedDate}
+      />
+
     </div>
   )
 }

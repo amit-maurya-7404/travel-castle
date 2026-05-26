@@ -6,6 +6,7 @@ import { TravelBlogsSection } from '@/components/sections/TravelBlogsSection'
 import { TestimonialsSection } from '@/components/sections/TestimonialsSection'
 import { GallerySection } from '@/components/sections/GallerySection'
 import { CTASection } from '@/components/sections/CTASection'
+import { Footer } from '@/components/layout/Footer'
 
 export default function Home() {
   return (
@@ -17,6 +18,7 @@ export default function Home() {
       <TestimonialsSection />
       <GallerySection />
       <CTASection />
+      {/* <Footer /> */}
     </div>
   )
 }
