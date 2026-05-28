@@ -1,11 +1,12 @@
 import { randomUUID } from 'crypto'
+import { testimonials } from '@/constants/data'
 
 function isValidMongoUri(uri?: string) {
   if (!uri || typeof uri !== 'string') return false;
-  
+
   const hasProtocol = uri.startsWith('mongodb://') || uri.startsWith('mongodb+srv://');
   const hasPlaceholders = uri.includes('<username>') || uri.includes('<password>');
-  
+
   return hasProtocol && !hasPlaceholders;
 }
 
@@ -182,32 +183,18 @@ const gallery: GalleryItem[] = [
   { _id: 'inbound-22', title: 'Paragliding View', image: '/images/gallery/inbound_img22.jpeg', category: 'experience', published: true, createdAt: timestamp(), updatedAt: timestamp() },
   { _id: 'inbound-23', title: 'Traditional Village Art', image: '/images/gallery/inbound_img23.jpeg', category: 'culture', published: true, createdAt: timestamp(), updatedAt: timestamp() },
 ]
-const reviews: ReviewItem[] = [
-  {
-    _id: '1',
-    author: 'Sakshi Sachdev',
-    rating: 5,
-    text: 'More than the place; it was the co-travelers! More than the group, it was our very own guide who made us feel loved, heard and seen without any judgments.',
-    destination: 'Thailand',
-    avatar: '/images/avatar-1.jpg',
-    verified: true,
-    published: true,
-    createdAt: timestamp(),
-    updatedAt: timestamp(),
-  },
-  {
-    _id: '2',
-    author: 'James Watson',
-    rating: 5,
-    text: 'Most people go on holiday to escape stress, but my experience was the complete opposite. We started as strangers. By the end, we were an inseparable family.',
-    destination: 'Thailand',
-    avatar: '/images/avatar-2.jpg',
-    verified: true,
-    published: true,
-    createdAt: timestamp(),
-    updatedAt: timestamp(),
-  }
-]
+const reviews: ReviewItem[] = testimonials.map((t, index) => ({
+  _id: String(index + 1),
+  author: t.author,
+  rating: 5,
+  text: t.text,
+  destination: t.destination,
+  avatar: t.avatar || '',
+  verified: true,
+  published: true,
+  createdAt: timestamp(),
+  updatedAt: timestamp(),
+}))
 
 export function getPackages(filters: { category?: string; type?: string; published?: boolean } = {}) {
   return packages.filter(item => {

@@ -31,7 +31,7 @@ export function TestimonialsSection() {
         <div className="absolute w-[600px] h-[600px] bg-green-500/10 rounded-full blur-[100px] -bottom-48 -left-48 animate-float-delayed opacity-50"></div>
       </div>
 
-      <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
         <div className="mb-16 animate-slide-in-up flex flex-col items-center text-center">
           <div className="inline-flex items-center gap-2 mb-4 px-4 py-1.5 rounded-full bg-primary/10 border border-primary/20">
             <Sparkles className="w-4 h-4 text-primary" />

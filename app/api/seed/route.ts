@@ -1,6 +1,7 @@
 import { connectDB } from '@/lib/mongodb'
 import { Package, Blog, Review, Gallery } from '@/lib/models'
 import { NextResponse } from 'next/server'
+import { testimonials } from '@/constants/data'
 
 const DUMMY_PACKAGES = [
   {
@@ -44,26 +45,15 @@ const DUMMY_BLOGS = [
   }
 ]
 
-const DUMMY_REVIEWS = [
-  {
-    author: 'Sakshi Sachdev',
-    rating: 5,
-    text: 'More than the place; it was the co-travelers! More than the group, it was our very own guide who made us feel loved, heard and seen without any judgments.',
-    destination: 'Thailand',
-    avatar: '/images/avatar-1.jpg',
-    verified: true,
-    published: true,
-  },
-  {
-    author: 'James Watson',
-    rating: 5,
-    text: 'Most people go on holiday to escape stress, but my experience was the complete opposite. They promised slow travel, and they absolutely delivered.',
-    destination: 'Bali',
-    avatar: '/images/avatar-2.jpg',
-    verified: true,
-    published: true,
-  }
-]
+const DUMMY_REVIEWS = testimonials.map((t) => ({
+  author: t.author,
+  rating: 5,
+  text: t.text,
+  destination: t.destination,
+  avatar: t.avatar || '',
+  verified: true,
+  published: true,
+}))
 
 const DUMMY_GALLERY = [
   { title: 'Scenic Valley Ride', image: '/images/gallery/inbound_img1.jpeg', category: 'nature', published: true },
@@ -107,15 +97,15 @@ export async function GET() {
     await Review.insertMany(DUMMY_REVIEWS)
     await Gallery.insertMany(DUMMY_GALLERY)
 
-    return NextResponse.json({ 
-      success: true, 
-      message: 'Database seeded successfully with dummy content!' 
+    return NextResponse.json({
+      success: true,
+      message: 'Database seeded successfully with dummy content!'
     })
   } catch (error) {
     console.error('Seeding error:', error)
-    return NextResponse.json({ 
-      success: false, 
-      error: 'Failed to seed database' 
+    return NextResponse.json({
+      success: false,
+      error: 'Failed to seed database'
     }, { status: 500 })
   }
 }

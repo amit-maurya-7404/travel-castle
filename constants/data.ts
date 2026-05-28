@@ -162,7 +162,7 @@ export const testimonials = [
     text: 'More than the place; it was the co-travelers! More than the group, it was our very own guide who made us feel loved, heard and seen without any judgments. We all were ourselves and the credit goes to the incredible team. Cheers!',
     author: 'Sakshi Sachdev',
     destination: 'Thailand',
-    avatar: '/images/avatar-1.jpg',
+    avatar: '',
   },
   {
     text: 'Most people go on holiday to escape stress, but my experience was the complete opposite. They promised slow travel, and they absolutely delivered. We started as strangers. By the end, we were an inseparable family. That\'s the magic created here.',
@@ -181,6 +181,42 @@ export const testimonials = [
     author: 'Michael Chen',
     destination: 'Bali',
     avatar: '/images/avatar-1.jpg',
+  },
+  {
+    text: "I had a great experience with this travel agency. They handled my mother's Germany Schengen visa process very professionally and guided us at every step. The documentation was well-organized, communication was clear, and the process was smooth and stress-free. Thanks to their support, the visa was approved without any issues. Highly recommended for reliable visa assistance.",
+    author: 'Mayuresh Lohar',
+    destination: 'Germany (Visa)',
+    avatar: '',
+  },
+  {
+    text: "I recently used the services of Travel Castle to apply for my China visa. The team handled everything professionally — they guided me through the documentation, answered all my questions, and ensured I had everything needed for the application. Thanks to their support, I received my China visa right on time without any stress or delays. Highly recommend Travel Castle for anyone looking for efficient and reliable visa assistance!",
+    author: 'Varun Shetti',
+    destination: 'China (Visa)',
+    avatar: '',
+  },
+  {
+    text: "Applied for UK visa through Travel Castle. This was our second time applying through them. Previously it was a successful Schengen visa. Applied again through Bansi, she was super diligent and helpful and guided us very clearly. Very efficient and affordable service. Would avail their services again. Highly recommended.",
+    author: 'Jagruti Dhondage',
+    destination: 'UK (Visa)',
+    avatar: '',
+  },
+  {
+    text: "Excellent service providers - great attention to detail. They make the whole process extremely smooth. I've worked with various agents and have always been disappointed but these folks are amazing + always deliver results - call out to Mohini and Heena!",
+    author: 'Rashmi Shivashankar',
+    destination: 'Visa Services',
+    avatar: '',
+  },
+  {
+    text: "Travelcastle arranged and guided us for the Bangkok trip although we had planned a short tour. Highly professional yet friendly approach and we are satisfied customers. Will definitely recommend Travelcastle :)",
+    author: 'Vijaya Rao',
+    destination: 'Bangkok',
+    avatar: '',
+  },
+  {
+    text: "Thank you, Travel Castle, for an exceptionally seamless & well-curated Singapore trip experience. Every moment was truly memorable, & the meticulous planning made our journey absolutely stress-free! Special thanks to Nikita for the smooth coordination throughout. As always, we returned with beautiful memories & immense satisfaction. Truly an agency we can always trust!😍💖✨",
+    author: 'Natasha Chimah',
+    destination: 'Singapore',
+    avatar: '',
   },
 ]
 
