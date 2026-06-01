@@ -78,8 +78,8 @@ export function BookingDialog({ open, onOpenChange, packageTitle, optionName = '
   if (!open) return null
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-xs p-4 animate-fade-in">
-      <div className="bg-white rounded-3xl p-6 md:p-8 max-w-md w-full shadow-2xl relative border border-slate-100 animate-scale-in">
+    <div className="fixed inset-0 z-[100] flex items-center justify-center bg-black/60 backdrop-blur-xs p-4 animate-fade-in">
+      <div className="bg-white rounded-3xl p-6 md:p-8 max-w-md w-full shadow-2xl relative border border-slate-100 animate-scale-in max-h-[calc(100dvh-2rem)] overflow-y-auto">
         <button
           onClick={() => { onOpenChange(false); setSubmitted(false); setPreviewUrl(null); }}
           className="absolute top-4 right-4 text-slate-400 hover:text-slate-600 transition-colors text-lg"
