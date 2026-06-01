@@ -60,7 +60,7 @@ export function TravelBlogsSection() {
               {blogs.map((blog, idx) => (
                 <CarouselItem key={idx} className="pl-4 basis-[85%] md:basis-1/2 lg:basis-1/3">
                   <div className="p-1 h-full">
-                    <Link href={`#`} className="block group h-full">
+                    <Link href={`/blogs/${blog.id}`} className="block group h-full">
                       <Card
                         className="border-0 bg-transparent shadow-none hover:bg-white/5 transition-all duration-500 rounded-3xl overflow-hidden cursor-pointer flex flex-col h-full"
                       >

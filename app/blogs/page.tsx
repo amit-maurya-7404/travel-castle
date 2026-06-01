@@ -2,10 +2,12 @@
 
 import { useState } from 'react'
 import Image from 'next/image'
+import Link from 'next/link'
 import { Button } from '@/components/ui/button'
 import { Card } from '@/components/ui/card'
 import { Input } from '@/components/ui/input'
 import { MapPin, Users, Sparkles, Calendar, Search, Tag } from 'lucide-react'
+import { blogs } from '@/constants/data'
 
 export default function Blogs() {
   const [searchTerm, setSearchTerm] = useState('')
@@ -98,9 +100,11 @@ export default function Blogs() {
                   </div>
                   <h3 className="text-2xl font-bold text-foreground mb-4">{filteredBlogs[0].title}</h3>
                   <p className="text-muted-foreground mb-6 leading-relaxed">{filteredBlogs[0].description}</p>
-                  <Button className="bg-primary hover:bg-accent text-white w-fit hover-lift">
-                    Read Full Story
-                  </Button>
+                  <Link href={`/blogs/${filteredBlogs[0].id}`}>
+                    <Button className="bg-primary hover:bg-accent text-white w-fit hover-lift">
+                      Read Full Story
+                    </Button>
+                  </Link>
                 </div>
               </div>
             </Card>
@@ -129,38 +133,39 @@ export default function Blogs() {
           ) : (
             <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8 stagger-children">
               {filteredBlogs.slice(1).map((blog, idx) => (
-                <Card
-                  key={idx}
-                  className="overflow-hidden border-border hover:shadow-luxury transition cursor-pointer card-3d group depth-card"
-                >
-                  <div className="relative h-48 overflow-hidden bg-gradient-to-br from-primary/20 to-accent/20">
-                    <Image
-                      src={blog.image}
-                      alt={blog.title}
-                      fill
-                      className="object-cover group-hover:scale-110 transition-transform duration-500"
-                    />
-                    <div className="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-center justify-center">
-                      <MapPin className="w-10 h-10 text-white animate-bounce-subtle" />
+                <Link key={idx} href={`/blogs/${blog.id}`} className="block h-full">
+                  <Card
+                    className="overflow-hidden border-border hover:shadow-luxury transition cursor-pointer card-3d group depth-card h-full flex flex-col"
+                  >
+                    <div className="relative h-48 overflow-hidden bg-gradient-to-br from-primary/20 to-accent/20">
+                      <Image
+                        src={blog.image}
+                        alt={blog.title}
+                        fill
+                        className="object-cover group-hover:scale-110 transition-transform duration-500"
+                      />
+                      <div className="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-center justify-center">
+                        <MapPin className="w-10 h-10 text-white animate-bounce-subtle" />
+                      </div>
+                      <div className="absolute top-4 left-4 bg-primary/90 text-white px-2 py-1 rounded text-xs font-semibold">
+                        {blog.category}
+                      </div>
                     </div>
-                    <div className="absolute top-4 left-4 bg-primary/90 text-white px-2 py-1 rounded text-xs font-semibold">
-                      {blog.category}
+                    <div className="p-6 flex flex-col flex-grow">
+                      <div className="flex items-center justify-between mb-3">
+                        <span className="text-sm text-muted-foreground">{blog.date}</span>
+                        <span className="text-sm text-muted-foreground">{blog.readTime}</span>
+                      </div>
+                      <h3 className="text-xl font-bold text-foreground mb-2 group-hover:text-primary transition duration-300 line-clamp-2">{blog.title}</h3>
+                      <p className="text-muted-foreground mb-4 leading-relaxed line-clamp-3 flex-grow">
+                        {blog.description}
+                      </p>
+                      <span className="text-primary hover:text-accent font-semibold transition inline-flex items-center gap-1 group/link mt-auto">
+                        Read More <span className="group-hover/link:translate-x-1 transition">→</span>
+                      </span>
                     </div>
-                  </div>
-                  <div className="p-6">
-                    <div className="flex items-center justify-between mb-3">
-                      <span className="text-sm text-muted-foreground">{blog.date}</span>
-                      <span className="text-sm text-muted-foreground">{blog.readTime}</span>
-                    </div>
-                    <h3 className="text-xl font-bold text-foreground mb-2 group-hover:text-primary transition duration-300">{blog.title}</h3>
-                    <p className="text-muted-foreground mb-4 leading-relaxed">
-                      {blog.description}
-                    </p>
-                    <a href="#" className="text-primary hover:text-accent font-semibold transition inline-flex items-center gap-1 group/link">
-                      Read More <span className="group-hover/link:translate-x-1 transition">→</span>
-                    </a>
-                  </div>
-                </Card>
+                  </Card>
+                </Link>
               ))}
             </div>
           )}
@@ -190,70 +195,4 @@ export default function Blogs() {
     </div>
   )
 }
-
-const blogs = [
-  {
-    title: 'Hidden Gems of Mountain Valleys',
-    description: 'Discover hidden gems and local experiences that will change your perspective on travel. From secret waterfalls to authentic village stays.',
-    image: '/images/blog-1.jpg',
-    category: 'destinations',
-    date: 'Dec 15, 2024',
-    readTime: '5 min read'
-  },
-  {
-    title: 'Exploring Ancient Temples & Culture',
-    description: 'Journey through time and immerse yourself in centuries of history and tradition. A deep dive into cultural heritage.',
-    image: '/images/blog-2.jpg',
-    category: 'culture',
-    date: 'Dec 10, 2024',
-    readTime: '7 min read'
-  },
-  {
-    title: 'Coastal Towns: A Vibrant Adventure',
-    description: 'Experience the colorful charm of coastal living and embrace the Mediterranean lifestyle. Sun, sea, and unforgettable memories.',
-    image: '/images/blog-3.jpg',
-    category: 'destinations',
-    date: 'Dec 5, 2024',
-    readTime: '6 min read'
-  },
-  {
-    title: 'Solo Travel: Finding Yourself on the Road',
-    description: 'The transformative power of traveling alone. Stories of self-discovery, unexpected connections, and personal growth.',
-    image: '/images/package-solo.jpg',
-    category: 'adventure',
-    date: 'Nov 28, 2024',
-    readTime: '8 min read'
-  },
-  {
-    title: 'Street Food Adventures Around the World',
-    description: 'From Bangkok night markets to Mexican taquerias, exploring the world one delicious bite at a time.',
-    image: '/images/package-family.jpg',
-    category: 'food',
-    date: 'Nov 20, 2024',
-    readTime: '6 min read'
-  },
-  {
-    title: 'Sustainable Travel: Making a Difference',
-    description: 'How to travel responsibly and make a positive impact on the destinations you visit and the communities you encounter.',
-    image: '/images/package-corporate.jpg',
-    category: 'tips',
-    date: 'Nov 15, 2024',
-    readTime: '9 min read'
-  },
-  {
-    title: 'Winter Wonderland: Seasonal Escapes',
-    description: 'The magic of winter travel destinations. From skiing in the Alps to cozy cabin retreats in snowy landscapes.',
-    image: '/images/hero-destination.jpg',
-    category: 'destinations',
-    date: 'Nov 10, 2024',
-    readTime: '5 min read'
-  },
-  {
-    title: 'Photography Tips for Travel Enthusiasts',
-    description: 'Capture stunning travel memories with these professional photography tips and techniques for beginners and experts alike.',
-    image: '/images/package-adventure.jpg',
-    category: 'tips',
-    date: 'Nov 5, 2024',
-    readTime: '7 min read'
-  }
-]
+

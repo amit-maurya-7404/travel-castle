@@ -91,38 +91,8 @@ export const packages = [
   },
 ]
 
-export const blogs = [
-  {
-    id: 'blog-1',
-    title: 'Hidden Gems of Mountain Valleys',
-    description: 'Discover hidden gems and local experiences that will change your perspective on travel.',
-    image: '/images/blog-1.jpg',
-  },
-  {
-    id: 'blog-2',
-    title: 'Exploring Ancient Temples & Culture',
-    description: 'Journey through time and immerse yourself in centuries of history and tradition.',
-    image: '/images/blog-2.jpg',
-  },
-  {
-    id: 'blog-3',
-    title: 'Coastal Towns: A Vibrant Adventure',
-    description: 'Experience the colorful charm of coastal living and embrace the Mediterranean lifestyle.',
-    image: '/images/blog-3.jpg',
-  },
-  {
-    id: 'blog-4',
-    title: 'Mountain Retreats & Serenity',
-    description: 'Find peace in the high altitudes with our guide to the best mountain escapes.',
-    image: '/images/hero-destination.jpg',
-  },
-  {
-    id: 'blog-5',
-    title: 'Desert Nights: Under the Stars',
-    description: 'A magical guide to experiencing the silence and beauty of the desert at night.',
-    image: '/images/package-corporate.jpg',
-  },
-]
+import { blogs as richBlogs } from './blogsData'
+export const blogs = richBlogs
 
 export const features = [
   {
